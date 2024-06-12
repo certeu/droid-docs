@@ -1,0 +1,46 @@
+site_name: droid
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.top
+    - navigation.sections
+    - navigation.top
+    - toc.follow
+    - content.code.copy
+    - content.code.annotate
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+nav:
+  - Home: index.md
+  - Getting started:
+    - Installation: getting-started.md
+    - Configuration: configuration.md
+    - Platforms: platforms.md
+    - Rule custom fields: custom_fields.md
+  - Usage: usage.md
+
+markdown_extensions:
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+
+repo_url: https://github.com/certeu/droid
+repo_name: certeu/droid
