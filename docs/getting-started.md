@@ -8,7 +8,7 @@
 - Install `droid` and the desired Sigma [backends] and [pipelines]
 - [Configure](/configuration/) your droid configuration file
 - Configure your Sigma [pipelines](/pipelines/)
-- Optional: Validate your rules using your validation
+- Optional: Validate your rules using pySigma validators
 
 If you already have a repository containing all your Sigma rules or if you wish to start from scratch we made available a [repository](https://github.com/certeu/droid-init) to start with `droid` by cloning it.
 

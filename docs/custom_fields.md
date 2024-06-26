@@ -5,11 +5,11 @@ You can place custom fields in your rules to:
 - Disable a rule: `disabled: True`
 - Remove a rule: `removed: True`
 
-Additionally, using `ignore_search` to `True` will disable the search when using `-s`
+Additionally, using `ignore_search` to `True` will disable the search when using the argument `-s`.
 
 Some of the settings placed in your `droid` configuration file can be replaced as well.
 
-```yaml title="example_sigma.yml" hl_lines="25-35"
+```yaml title="example_sigma.yml" hl_lines="25-36"
 title: Load Undocumented Autoelevated COM Interface
 id: fb3722e4-1a06-46b6-b772-253e2e7db933
 status: test
