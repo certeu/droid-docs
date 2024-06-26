@@ -21,7 +21,7 @@ sigma_validation_config = "validation/validate.yml" # (2)!
 
 ### Configure the platform
 
-Next, configure your platform in the `platforms` section. You will find in the [platforms](/platforms/) page the required parameters.
+Next, configure your platform in the `platforms` section. You will find in the [platforms](./platforms.md) page the required parameters.
 
 ```toml
 [platforms.supported_platform]
@@ -31,7 +31,7 @@ Next, configure your platform in the `platforms` section. You will find in the [
 
 ???+ warning
 
-    Make sure your platform is supported [here](/platforms/).
+    Make sure your platform is supported [here](./platforms.md).
 
 ### Configure your plaform pipelines
 
@@ -83,7 +83,7 @@ In the above example, when the Sigma logsource `product` and `category` of the S
 
 ???+ info
 
-    Make sure to install the appropriate pySigma backend for the supported platform. See the [installation](/getting-started/) section.
+    Make sure to install the appropriate pySigma backend for the supported platform. See the [installation](./getting-started.md) section.
 
 ```yaml title="splunk_process_access.yml" hl_lines="14 15 16 17"
 name: Splunk Windows process access

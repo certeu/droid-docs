@@ -27,7 +27,7 @@ hide:
 
 ???+ note
 
-    This requires a validation configuration, see [here](/configuration/#configure-the-validation).
+    This requires a validation configuration, see [here](./configuration.md#configure-the-validation).
 
 ```bash
 droid -cf droid_config.toml --platform microsoft_defender \
@@ -47,7 +47,7 @@ droid -cf droid_config.toml --platform splunk \
 
 ???+ note
 
-    This features works only with the [supported platforms](/platforms/).
+    This features works only with the [supported platforms](./platforms.md).
 
 ???+ info
 

@@ -6,8 +6,8 @@
 `droid` is published as a [Python package] and can be installed with `pip` in a virtual environment or in a Docker container. The installation is straightforward:
 
 - Install `droid` and the desired Sigma [backends] and [pipelines]
-- [Configure](/configuration/) your droid configuration file
-- Configure your Sigma [pipelines](/pipelines/)
+- [Configure](./configuration.md) your droid configuration file
+- Configure your Sigma [pipelines](./configuration.md#configure-your-plaform-pipelines)
 - Optional: Validate your rules using pySigma validators
 
 If you already have a repository containing all your Sigma rules or if you wish to start from scratch we made available a [repository](https://github.com/certeu/droid-init) to start with `droid` by cloning it.
