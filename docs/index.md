@@ -40,4 +40,4 @@ Key features are:
 
 ???+ note
 
-    It is also possible to use a plain SIEM/EDR [search query](/raw_rules/) instead of Sigma.
+    It is also possible to use a plain SIEM/EDR [search query](./raw_rules.md) instead of Sigma.
