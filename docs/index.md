@@ -37,3 +37,7 @@ Key features are:
 ???+ info
 
     The tool currently supports only Splunk and Microsoft Sentinel for the search and export feature. Additional platform support will be added in future updates.
+
+???+ note
+
+    It is also possible to use a plain SIEM/EDR [search query](/raw_rules/) instead of Sigma.

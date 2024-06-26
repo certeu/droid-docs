@@ -33,6 +33,7 @@ nav:
     - Configuration: configuration.md
     - Platforms: platforms.md
     - Rule custom fields: custom_fields.md
+    - Raw rules: raw_rules.md
   - Usage: usage.md
 
 markdown_extensions:
