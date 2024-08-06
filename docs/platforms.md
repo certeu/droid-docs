@@ -53,6 +53,7 @@ acl_update_perms_read = "group1, group2" # (6)!
 earliest_time = "-1h@h" # (7)!
 latest_time = "now" # (8)!
 cron_schedule = "0 * * * *"
+alert_expiration = "7d"
 ...
 ```
 
