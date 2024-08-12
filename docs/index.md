@@ -13,7 +13,7 @@ The tool also supports native SIEM/EDR search queries.
 
 ---
 
-**FIRST presentation slides:** coming soon.
+**FIRST presentation slides:** [Sigma Unleashed: A Realistic Implementation](https://www.first.org/resources/papers/conf2024/1315-1350-Sigma-Unleashed-Mathieu-Le-Cleach.pdf)
 
 **Source Code:** [https://github.com/certeu/droid](https://github.com/certeu/droid)
 
