@@ -12,12 +12,16 @@ The next sections will highlight the config per sections.
 raw_rules_directory = "rules/raw" # (1)!
 
 sigma_validation_config = "validation/validate.yml" # (2)!
+
+sigma_filters_directory = "filters/" # (3)!
 ...
 ```
 
 1.  This is the location of the raw rules directory.
 
 2.  This is the location of the Sigma validation config. See the appropriate section below.
+
+3.  Optional. This is the location of the [Sigma filters](https://sigmahq.io/docs/meta/filters.html) rules.
 
 ### Configure the platform
 

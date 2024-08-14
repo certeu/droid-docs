@@ -105,6 +105,10 @@ droid -cf droid_config.toml --platform splunk \
 --compile -d
 ```
 
+???+ info
+
+    If you want to use the [Sigma filters](https://sigmahq.io/docs/meta/filters.html), you can store your filters in a directory and use the `sigma_filters_directory` parameter. See the [configuration](./configuration.md#configure-the-basics).
+
 ## Test using Atomic Red Team
 
 ???+ note
