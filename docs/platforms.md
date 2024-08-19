@@ -183,6 +183,14 @@ When using the Azure Registation App, load the following environment variables:
 - `DROID_ELASTIC_USERNAME` : Elastic username
 - `DROID_ELASTIC_PASSWORD` : Elastic password
 
+### Supported Platforms
+For Sigma Rules both esql (ES|QL) and eql (EQL) are supported.
+However since only esql supports correlations rules, it is advised to use esql only.
+There are no known benefits to using EQL over ES|QL.
+
+For Raw Rules, only both esql (ES|QL) and eql (EQL) are supported.
+Always use the `raw_language` custom field to specify the language used in the Sigma yaml file.
+
 ### Main config
 
 | Parameter              | Mandatory | Default Value | Description                                                                                |
