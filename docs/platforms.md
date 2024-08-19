@@ -206,8 +206,7 @@ Always use the `raw_language` custom field to specify the language used in the S
 [platforms]
 
 [platforms.esql]
-search_auth = "basic"
-export_auth = "basic"
+auth_method = "basic"
 kibana_url = "https://kibana.test.organisation"
 kibana_ca = "kibana-ca.pem" # Or False to ignore certificates
 schedule_interval = 5
