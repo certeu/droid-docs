@@ -170,5 +170,55 @@ search_auth = "default"
 export_auth = "default"
 ```
 
+## Elastic Security
 
+### Authentication
 
+Right now only basic authentication is supported.
+
+- `basic`: Authenticate using username and password
+
+When using the Azure Registation App, load the following environment variables:
+
+- `DROID_ELASTIC_USERNAME` : Elastic username
+- `DROID_ELASTIC_PASSWORD` : Elastic password
+
+### Main config
+
+| Parameter              | Mandatory | Default Value | Description                                                                                |
+| ---------------------- | --------- | ------------- | ------------------------------------------------------------------------------------------ |
+| kibana_url             | Yes       | N/A           | The Base URL to your Kibana, since the Security API used goes via Kibana not Elasticsearch |
+| kibana_ca              | No        | False         | Certificate Chain used on the Kibana host                                                  |
+| schedule_interval      | No        | "1"           | Interval at which the alert rule should run                                                |
+| schedule_interval_unit | No        | "h"           | Interval unit minute (m) or hour (h)                                                       |
+| license                | No        | "DRL"         | The license of your rule                                                                   |
+
+```toml
+[platforms]
+
+[platforms.esql]
+search_auth = "basic"
+export_auth = "basic"
+kibana_url = "https://kibana.test.organisation"
+kibana_ca = "kibana-ca.pem" # Or False to ignore certificates
+schedule_interval = 5
+schedule_interval_unit = "m"
+license = "DRL"
+alert_prefix = "SIGMA"
+
+[platforms.esql.pipelines.windows_process_creation]
+pipelines = ["pipelines/ecs_pipeline.yml"]
+product = "windows"
+category = "process_creation"
+...
+```
+
+### Sigma Custom Fields
+
+The Custom Fields available with the Elastic Integration are:
+| Custom Field   | Values     | Description                                         |
+| -------------- | ---------- | --------------------------------------------------- |
+| raw_language   | esql/eql   | The Language used on raw Rules                      |
+| disabled       | true/false | Set to true if you want to disable the rule         |
+| removed        | true/false | Set to true if you want to delete the rule          |
+| building_block | true/false | Set to true if your rule should be a building block |
