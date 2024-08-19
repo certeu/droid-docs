@@ -5,6 +5,7 @@ The following platforms are supported for the search and export features:
 - Splunk
 - Microsoft Sentinel
 - Microsoft Defender for Endpoint (only through Microsoft Sentinel for now)
+- Elastic Security
 
 ???+ info
 
