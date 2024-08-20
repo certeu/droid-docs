@@ -194,27 +194,36 @@ Always use the `raw_language` custom field to specify the language used in the S
 
 ### Main config
 
-| Parameter              | Mandatory | Default Value | Description                                                                                |
-| ---------------------- | --------- | ------------- | ------------------------------------------------------------------------------------------ |
-| kibana_url             | Yes       | N/A           | The Base URL to your Kibana, since the Security API used goes via Kibana not Elasticsearch |
-| kibana_ca              | No        | False         | Certificate Chain used on the Kibana host                                                  |
-| schedule_interval      | No        | "1"           | Interval at which the alert rule should run                                                |
-| schedule_interval_unit | No        | "h"           | Interval unit minute (m) or hour (h)                                                       |
-| license                | No        | "DRL"         | The license of your rule                                                                   |
+| Parameter              | Mandatory | Default Value | Description                                                                                          |
+| ---------------------- | --------- | ------------- | ---------------------------------------------------------------------------------------------------- |
+| kibana_url             | Yes       | N/A           | The Base URL to your Kibana, since the Security API used goes via Kibana not Elasticsearch           |
+| kibana_ca              | No        | False         | Certificate Chain used on the Kibana host                                                            |
+| elastic_ca             | No        | None          | Certificate Chain used on the Elastic host, can also be the same as Kibana, only used when Searching |
+| elastic_tls_verify     | No        | False         | Used to turn on and off Certificate Validation for Elastic Connections, only used when Searching     |
+| schedule_interval      | No        | "1"           | Interval at which the alert rule should run                                                          |
+| schedule_interval_unit | No        | "h"           | Interval unit minute (m) or hour (h)                                                                 |
+| license                | No        | "DRL"         | The license of your rule                                                                             |
 
 ```toml
 [platforms]
 
-[platforms.esql]
+[platforms.elastic]
 auth_method = "basic"
-kibana_url = "https://kibana.test.organisation"
+kibana_url = "https://kibana.test.org"
 kibana_ca = "kibana-ca.pem" # Or False to ignore certificates
+elastic_ca = "elastic-ca.pem"
+elastic_tls_verify = true
+elastic_hosts = [
+    "https://elasticsearch01.test.org:9200",
+    "https://elasticsearch02.test.org:9200",
+    "https://elasticsearch03.test.org:9200",
+]
 schedule_interval = 5
 schedule_interval_unit = "m"
 license = "DRL"
 alert_prefix = "SIGMA"
 
-[platforms.esql.pipelines.windows_process_creation]
+[platforms.elastic.pipelines.windows_process_creation]
 pipelines = ["pipelines/ecs_pipeline.yml"]
 product = "windows"
 category = "process_creation"
