@@ -222,6 +222,7 @@ schedule_interval = 5
 schedule_interval_unit = "m"
 license = "DRL"
 alert_prefix = "SIGMA"
+legacy_esql = false
 
 [platforms.elastic.pipelines.windows_process_creation]
 pipelines = ["pipelines/ecs_pipeline.yml"]
