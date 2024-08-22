@@ -194,16 +194,16 @@ Always use the `raw_language` custom field to specify the language used in the S
 
 ### Main config
 
-| Parameter              | Mandatory | Default Value | Description                                                                                          |
-| ---------------------- | --------- | ------------- | ---------------------------------------------------------------------------------------------------- |
-| kibana_url             | Yes       | N/A           | The Base URL to your Kibana, since the Security API used goes via Kibana not Elasticsearch           |
-| kibana_ca              | No        | False         | Certificate Chain used on the Kibana host                                                            |
-| elastic_ca             | No        | None          | Certificate Chain used on the Elastic host, can also be the same as Kibana, only used when Searching |
-| elastic_tls_verify     | No        | False         | Used to turn on and off Certificate Validation for Elastic Connections, only used when Searching     |
-| schedule_interval      | No        | "1"           | Interval at which the alert rule should run                                                          |
-| schedule_interval_unit | No        | "h"           | Interval unit minute (m) or hour (h)                                                                 |
-| license                | No        | "DRL"         | The license of your rule                                                                             |
-
+| Parameter              | Mandatory | Default Value | Description                                                                                                 |
+| ---------------------- | --------- | ------------- | ----------------------------------------------------------------------------------------------------------- |
+| kibana_url             | Yes       | N/A           | The Base URL to your Kibana, since the Security API used goes via Kibana not Elasticsearch                  |
+| kibana_ca              | No        | False         | Certificate Chain used on the Kibana host                                                                   |
+| elastic_ca             | No        | None          | Certificate Chain used on the Elastic host, can also be the same as Kibana, only used when Searching        |
+| elastic_tls_verify     | No        | False         | Used to turn on and off Certificate Validation for Elastic Connections, only used when Searching            |
+| schedule_interval      | No        | "1"           | Interval at which the alert rule should run                                                                 |
+| schedule_interval_unit | No        | "h"           | Interval unit minute (m) or hour (h)                                                                        |
+| license                | No        | "DRL"         | The license of your rule                                                                                    |
+| legacy_esql            | No        | false         | This flag is only if you are on an Elastic Version that needs the square brackets around the metadata info. |
 ```toml
 [platforms]
 
