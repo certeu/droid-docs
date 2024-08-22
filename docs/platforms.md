@@ -173,9 +173,17 @@ export_auth = "default"
 
 ## Elastic Security
 
+### Limitations
+
+The Raw EQL Backend does not support Index detection.
+So in cases of RAW EQL rules it is necessary to specify the indexes in the rule itself, or it will be defaulted to logs-*
+This limitation does not apply to Raw ES|QL rules since there the index is always specified in the rule itself.
+
+
 ### Authentication
 
 Right now only basic authentication is supported.
+If API Tokens are prefered, open a feature request.
 
 - `basic`: Authenticate using username and password
 
@@ -189,8 +197,11 @@ For Sigma Rules both esql (ES|QL) and eql (EQL) are supported.
 However since only esql supports correlations rules, it is advised to use esql only.
 There are no known benefits to using EQL over ES|QL.
 
-For Raw Rules, only both esql (ES|QL) and eql (EQL) are supported.
+For Raw Rules, both esql (ES|QL) and eql (EQL) are supported.
 Always use the `raw_language` custom field to specify the language used in the Sigma yaml file.
+
+For non correlation ES|QL rules, the metadata fields are automatically added to the query for better deduplication by the Elastic backend.
+For correlation ES|QL rules this is not needed since correlation rules are already deduplicated by their nature.
 
 ### Main config
 
@@ -234,9 +245,10 @@ category = "process_creation"
 ### Sigma Custom Fields
 
 The Custom Fields available with the Elastic Integration are:
-| Custom Field   | Values     | Description                                         |
-| -------------- | ---------- | --------------------------------------------------- |
-| raw_language   | esql/eql   | The Language used on raw Rules                      |
-| disabled       | true/false | Set to true if you want to disable the rule         |
-| removed        | true/false | Set to true if you want to delete the rule          |
-| building_block | true/false | Set to true if your rule should be a building block |
+| Custom Field   | Values          | Description                                                                        |
+| -------------- | --------------- | ---------------------------------------------------------------------------------- |
+| raw_language   | esql/eql        | The Language used on raw Rules                                                     |
+| disabled       | true/false      | Set to true if you want to disable the rule                                        |
+| removed        | true/false      | Set to true if you want to delete the rule                                         |
+| building_block | true/false      | Set to true if your rule should be a building block                                |
+| index          | list of strings | Set one or more indexes to be used. Use a list (-) if you want more than one index |
