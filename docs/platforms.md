@@ -215,6 +215,8 @@ For correlation ES|QL rules this is not needed since correlation rules are alrea
 | schedule_interval_unit | No        | "h"           | Interval unit minute (m) or hour (h)                                                                        |
 | license                | No        | "DRL"         | The license of your rule                                                                                    |
 | legacy_esql            | No        | false         | This flag is only if you are on an Elastic Version that needs the square brackets around the metadata info. |
+| building_block_prefix  | No        | None          | Optional prefix for Building Block Rules to distinguish from Alert rules, defaults to BB                    |
+| alert_prefix           | No        | BB            | Optional prefix to your imported rules to distinguish them                                                  |
 ```toml
 [platforms]
 
