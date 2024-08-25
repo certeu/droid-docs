@@ -314,11 +314,12 @@ category = "process_creation"
 ### Sigma Custom Fields
 
 The Custom Fields available with the Elastic Integration are:
-| Custom Field | Values     | Description                                                                                   |
-| ------------ | ---------- | --------------------------------------------------------------------------------------------- |
-| disabled     | true/false | Set to true if you want to disable the rule                                                   |
-| removed      | true/false | Set to true if you want to delete the rule                                                    |
-| action       | list       | The actions that should be performed on rule trigger, see action section for more information |
+| Custom Field   | Values     | Description                                                                                   |
+| -------------- | ---------- | --------------------------------------------------------------------------------------------- |
+| disabled       | true/false | Set to true if you want to disable the rule                                                   |
+| removed        | true/false | Set to true if you want to delete the rule                                                    |
+| action         | list       | The actions that should be performed on rule trigger, see action section for more information |
+| impactedAssets | list       | The impactedAssets are needed for Asset mapping to the alerts. Defaults to Device = deviceId  |
 
 ### Action
 
@@ -368,4 +369,27 @@ custom:
     #  deviceGroupNames:
     #  identifier: initiatingProcessSHA256 # sha256, sha1, initiatingProcessSHA1, initiatingProcessSHA256
 
+```
+
+
+### Impacted Assets
+
+This field is needed for asset mapping in the resulting alerts.
+It defaults to Impacted Asset = deviceId, but that might not always work
+
+| Impacted Asset Type | Identifier (Allowed Values)                                                                                                         |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Device              | deviceId, deviceName                                                                                                                |
+| Mailbox             | accountUpn, initiatingProcessAccountUpn                                                                                             |
+| User                | accountObjectId, accountSid, accountUpn, initiatingProcessAccountObjectId, initiatingProcessAccountSid, initiatingProcessAccountUpn |
+
+
+```yaml
+  impactedAssets:
+    - impactedAssetType: Device
+      identifier: deviceId #deviceId, deviceName
+    - impactedAssetType: Mailbox
+      identifier: initiatingProcessAccountUpn #accountUpn, initiatingProcessAccountUpn
+    - impactedAssetType: User
+      identifier: initiatingProcessAccountUpn # accountObjectId, accountSid, accountUpn, initiatingProcessAccountObjectId, initiatingProcessAccountSid, initiatingProcessAccountUpn
 ```
