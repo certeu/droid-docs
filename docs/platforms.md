@@ -381,7 +381,7 @@ It defaults to Impacted Asset = deviceId, but that might not always work
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | Device              | deviceId, deviceName                                                                                                                |
 | Mailbox             | accountUpn, initiatingProcessAccountUpn                                                                                             |
-| User                | accountObjectId, accountSid, accountUpn, initiatingProcessAccountObjectId, initiatingProcessAccountSid, initiatingProcessAccountUpn |
+| User                | targetAccountUpn, accountObjectId, accountSid, accountUpn, initiatingProcessAccountObjectId, initiatingProcessAccountSid, initiatingProcessAccountUpn |
 
 
 ```yaml
@@ -391,5 +391,5 @@ It defaults to Impacted Asset = deviceId, but that might not always work
     - impactedAssetType: Mailbox
       identifier: initiatingProcessAccountUpn #accountUpn, initiatingProcessAccountUpn
     - impactedAssetType: User
-      identifier: initiatingProcessAccountUpn # accountObjectId, accountSid, accountUpn, initiatingProcessAccountObjectId, initiatingProcessAccountSid, initiatingProcessAccountUpn
+      identifier: initiatingProcessAccountUpn # targetAccountUpn, accountObjectId, accountSid, accountUpn, initiatingProcessAccountObjectId, initiatingProcessAccountSid, initiatingProcessAccountUpn
 ```
