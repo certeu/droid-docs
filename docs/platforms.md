@@ -268,16 +268,9 @@ Since the pySigma converter does not yet support correlation rules only standard
 ### Authentication
 
 Only App registration is supported.
+As a parameter in the config you have to specifiy where the yaml file containing one or multiple app registrations is located.
 
-When using the Azure Registation App, load the following environment variables:
 
-- `app`: Azure Registration App
-
-When using the Azure Registation App, load the following environment variables:
-
-- `DROID_AZURE_TENANT_ID`: Azure tenant ID
-- `DROID_AZURE_CLIENT_ID`: Client ID of the registration app
-- `DROID_AZURE_CLIENT_SECRET`: Azure client secret
 
 ### Supported Platforms
 
@@ -285,12 +278,13 @@ Both Sigma and Raw rules are supported under the plattform name "microsoft365def
 
 ### Main config
 
-| Parameter    | Mandatory | Default Value | Description                                                                                                                                                                                                           |
-| ------------ | --------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| search_auth  | Yes       | N/A           | How you want to authenticate for Search queries. Right now only App Regs are supported                                                                                                                                |
-| export_auth  | Yes       | N/A           | How you want to authenticate for exporting queries. Right now only App Regs are supported                                                                                                                             |
-| query_period | Yes       | N/A           | The period of time the query should run over. Accepted Values are: 1h, 3h, 12h, 24h or 0 for near realtime, however this only works on quick queries, Sigma queries should always be OK, but RAW rules might not work |
-| alert_prefix | No        | False         | Prefix for the exported rule name                                                                                                                                                                                     |
+| Parameter           | Mandatory | Default Value | Description                                                                                                                                          |
+| ------------------- | --------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| search_auth         | Yes       | N/A           | How you want to authenticate for Search queries. Right now only App Regs are supported                                                               |
+| export_auth         | Yes       | N/A           | How you want to authenticate for exporting queries. Right now only App Regs are supported                                                            |
+| query_period        | Yes       | N/A           | The period of time the query should run over. Accepted Values are: 1h, 3h, 12h, 24h or 0 for near realtime, however this only works on quick queries |
+| alert_prefix        | No        | False         | Prefix for the exported rule name                                                                                                                    |
+| authentication_file | Yes       | N/A           | Location of the authentication yaml                                                                                                                  |
 
 
 
@@ -307,9 +301,18 @@ alert_prefix = "SIGMA"
 pipelines = ["microsoft_365_defender"]
 product = "windows"
 category = "process_creation"
+authentication_file = "microsoft365defender-authentication.yml"
 
 ...
 ```
+
+```yaml
+- name: TenantName
+  client_id: 1234
+  client_secret: 1234
+  tenant_id: 1234
+```
+
 
 ### Sigma Custom Fields
 
@@ -377,10 +380,10 @@ custom:
 This field is needed for asset mapping in the resulting alerts.
 It defaults to Impacted Asset = deviceId, but that might not always work
 
-| Impacted Asset Type | Identifier (Allowed Values)                                                                                                         |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Device              | deviceId, deviceName                                                                                                                |
-| Mailbox             | accountUpn, initiatingProcessAccountUpn                                                                                             |
+| Impacted Asset Type | Identifier (Allowed Values)                                                                                                                           |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Device              | deviceId, deviceName                                                                                                                                  |
+| Mailbox             | accountUpn, initiatingProcessAccountUpn                                                                                                               |
 | User                | targetAccountUpn, accountObjectId, accountSid, accountUpn, initiatingProcessAccountObjectId, initiatingProcessAccountSid, initiatingProcessAccountUpn |
 
 
