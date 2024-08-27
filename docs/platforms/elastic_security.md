@@ -103,6 +103,7 @@ license = "DRL"
 alert_prefix = "SIGMA"
 legacy_esql = false
 
+# Pipeline example
 [platforms.elastic.pipelines.windows_process_creation]
 pipelines = ["pipelines/ecs_pipeline.yml"]
 product = "windows"

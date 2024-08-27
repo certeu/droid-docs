@@ -60,7 +60,6 @@ Both Sigma and raw rules are supported under the platform name "microsoft365defe
 | alert_prefix | No        | None         | Prefix for the exported rule name  |
 | tenant_id | No        | None         | Tenant ID when using "default" |
 
-
 ```toml
 [platforms]
 [platforms.microsoft365defender]
@@ -81,6 +80,7 @@ category = "process_creation"
 ### Sigma Custom Fields
 
 The Custom Fields available with the Elastic Integration are:
+
 | Custom Field   | Values     | Description                                                                                   |
 | -------------- | ---------- | --------------------------------------------------------------------------------------------- |
 | disabled       | true/false | Set to true if you want to disable the rule                                                   |
