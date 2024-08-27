@@ -1,3 +1,12 @@
+- [x] Search feature
+- [x] Export feature
+    * [x] Remove detection rules
+    * [x] Disable detection rules
+- [x] MSSP feature
+    * [x] Search and retrieve results from multiple tenants
+    * [x] Export in multiple tenants
+- [ ] Detection rule actions
+
 ### Limitations
 
 Since no stable PySigma backend is currently available, only raw rules are supported.

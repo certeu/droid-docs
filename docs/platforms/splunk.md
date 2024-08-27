@@ -1,3 +1,11 @@
+- [x] Search feature
+- [x] Export feature
+    * [x] Remove detection rules
+    * [x] Disable detection rules
+- [x] Detection rule actions
+    * [x] Email
+    * [x] Webhook
+
 To use Splunk, the following sections are required:
 
 - `[platforms.splunk]`: handle the basic configuration and the SIEM settings for searches and alerts

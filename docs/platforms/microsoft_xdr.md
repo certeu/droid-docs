@@ -1,14 +1,38 @@
+- [x] Search feature
+- [x] Export feature
+    * [x] Remove detection rules
+    * [x] Disable detection rules
+- [ ] MSSP feature
+    * [ ] Search in multiple tenants
+    * [ ] Search in multiple tenants
+- [x] Detection rule actions
+    * [x] forceUserPasswordReset
+    * [x] disableUser
+    * [x] markUserAsCompromised
+    * [x] stopAndQuarantineFile
+    * [x] restrictAppExecution
+    * [x] initiateInvestigation
+    * [x] runAntivirusScan
+    * [x] collectInvestigationPackage
+    * [x] isolateDevice
+    * [x] blockFile
+    * [x] allowFile
+
 ### Limitations
 
 Since the PySigma backend [microsoft365defender](https://github.com/AttackIQ/pySigma-backend-microsoft365defender) does not yet support correlation rules only standard sigma and raw rules are supported.
 
 ### Authentication
 
-Only App registration is supported.
+Two authentication mode are supported:
 
-When using the Azure Registation App, load the following environment variables:
-
+- `default`: Default authentication via `az login`
 - `app`: Azure Registration App
+
+When using the default authentication:
+
+1. Head to `portal.azure.com` and authenticate using MFA
+2. Use `az cli` to fetch the authentication session
 
 When using the Azure Registation App, load the following environment variables:
 
@@ -16,18 +40,25 @@ When using the Azure Registation App, load the following environment variables:
 - `DROID_AZURE_CLIENT_ID`: Client ID of the registration app
 - `DROID_AZURE_CLIENT_SECRET`: Azure client secret
 
+The keys `workspace_id` and `workspace_name` are the base workspace declaration but this values can be replaced with the environments `DROID_AZURE_WORKSPACE_ID` and `DROID_AZURE_WORKSPACE_NAME`.
+
+???+ note
+
+    When using the default authentication, set the `tenant_id` in the configuration
+
 ### Supported Platforms
 
-Both Sigma and Raw rules are supported under the plattform name "microsoft365defender"
+Both Sigma and raw rules are supported under the platform name "microsoft365defender".
 
 ### Main config
 
-| Parameter    | Mandatory | Default Value | Description                                                                                                                                                                                                           |
-| ------------ | --------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| search_auth  | Yes       | N/A           | How you want to authenticate for Search queries. Right now only App Regs are supported                                                                                                                                |
-| export_auth  | Yes       | N/A           | How you want to authenticate for exporting queries. Right now only App Regs are supported                                                                                                                             |
+| Parameter    | Mandatory | Default Value | Description   |
+| ------------ | --------- | ------------- | -------------- |
+| search_auth  | Yes       | N/A           | Authentication method: "app" or "default" |
+| export_auth  | Yes       | N/A           | Authentication method: "app" or "default" |
 | query_period | Yes       | N/A           | The period of time the query should run over. Accepted Values are: 1h, 3h, 12h, 24h or 0 for near realtime, however this only works on quick queries, Sigma queries should always be OK, but RAW rules might not work |
-| alert_prefix | No        | None         | Prefix for the exported rule name                                                                                                                                                                                     |
+| alert_prefix | No        | None         | Prefix for the exported rule name  |
+| tenant_id | No        | None         | Tenant ID when using "default" |
 
 
 ```toml

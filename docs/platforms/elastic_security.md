@@ -1,3 +1,9 @@
+- [x] Search feature
+- [x] Export feature
+    * [x] Remove detection rules
+    * [x] Disable detection rules
+- [ ] Detection rule actions
+
 ### Index detection
 
 ???+ warning
