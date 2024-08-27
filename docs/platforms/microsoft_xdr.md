@@ -29,7 +29,6 @@ Both Sigma and Raw rules are supported under the plattform name "microsoft365def
 | query_period | Yes       | N/A           | The period of time the query should run over. Accepted Values are: 1h, 3h, 12h, 24h or 0 for near realtime, however this only works on quick queries, Sigma queries should always be OK, but RAW rules might not work |
 | alert_prefix | No        | None         | Prefix for the exported rule name                                                                                                                                                                                     |
 
-
 ```toml
 [platforms]
 [platforms.microsoft365defender]
@@ -50,6 +49,7 @@ category = "process_creation"
 ### Sigma Custom Fields
 
 The Custom Fields available with the Elastic Integration are:
+
 | Custom Field   | Values     | Description                                                                                   |
 | -------------- | ---------- | --------------------------------------------------------------------------------------------- |
 | disabled       | true/false | Set to true if you want to disable the rule                                                   |
