@@ -47,7 +47,7 @@ droid -cf droid_config.toml --platform splunk \
 
 ???+ note
 
-    This features works only with the [supported platforms](./platforms.md).
+    This features works only with the [supported platforms](./platforms/platforms.md).
 
 ???+ info
 

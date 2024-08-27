@@ -31,10 +31,16 @@ nav:
   - Getting started:
     - Installation: getting-started.md
     - Configuration: configuration.md
-    - Platforms: platforms.md
     - Rule custom fields: custom_fields.md
     - Raw rules: raw_rules.md
+  - Platforms:
+    - Platforms: platforms/platforms.md
+    - Splunk: platforms/splunk.md
+    - Elastic Security: platforms/elastic_security.md
+    - Microsoft Sentinel: platforms/microsoft_sentinel.md
+    - Microsoft XDR: platforms/microsoft_xdr.md
   - Usage: usage.md
+
 
 markdown_extensions:
   - pymdownx.superfences
