@@ -25,7 +25,7 @@ sigma_filters_directory = "filters/" # (3)!
 
 ### Configure the platform
 
-Next, configure your platform in the `platforms` section. You will find in one of the [platforms](./platforms/platforms.md) page the required parameters.
+Next, configure your platform in the `platforms` section. You will find in one of the [platforms](./platforms/index.md) page the required parameters.
 
 ```toml
 [platforms.supported_platform]
@@ -35,7 +35,7 @@ Next, configure your platform in the `platforms` section. You will find in one o
 
 ???+ warning
 
-    Make sure your platform is supported [here](./platforms/platforms.md).
+    Make sure your platform is supported [here](./platforms/index.md).
 
 ### Configure your plaform pipelines
 

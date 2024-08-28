@@ -1,6 +1,6 @@
 # Platforms
 
-The following platforms are supported for the search and export features:
+The following platforms are supported:
 
 - [Splunk](./splunk.md)
 - [Elastic Security](./elastic_security.md)

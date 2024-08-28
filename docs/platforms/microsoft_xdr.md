@@ -141,7 +141,11 @@ custom:
 
 ### Impacted Assets
 
-This field is needed for asset mapping in the resulting alerts. It defaults to Impacted Asset = deviceId, but that might not always work.
+When deploying raw, the custom field `impactedAssets` is required for the asset mapping in the resulting alerts.
+
+???+ note
+
+    The default value is currently `deviceId` but it might not always work depending on your KQL. As for the Sigma rules, if you make the use of `| project` for instance, make sure to output `DeviceId`.
 
 | Impacted Asset Type | Identifier (Allowed Values)                                                                                                         |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
@@ -160,3 +164,7 @@ custom:
     - impactedAssetType: User
         identifier: initiatingProcessAccountUpn # targetAccountUpn, accountObjectId, accountSid, accountUpn, initiatingProcessAccountObjectId, initiatingProcessAccountSid, initiatingProcessAccountUpn
 ```
+
+???+ warning
+
+    Failing to provide this field will result in non-working detection rules on the platform. We advise to introduce some validation check in your CI/CD process for the Microsoft XDR raw rules.

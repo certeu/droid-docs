@@ -1,5 +1,10 @@
 site_name: droid
+site_url: https://certeu.github.io/droid-docs/
+site_description: >-
+  droid is a PySigma wrapper allowing an easy adoption of Sigma and helps enabling Detection-As-Code.
 theme:
+  logo: _static/favicon.ico
+  favicon: _static/favicon.ico
   name: material
   features:
     - navigation.tabs
@@ -9,6 +14,7 @@ theme:
     - toc.follow
     - content.code.copy
     - content.code.annotate
+    - navigation.indexes
   palette:
     - scheme: default
       primary: indigo
@@ -34,7 +40,7 @@ nav:
     - Rule custom fields: custom_fields.md
     - Raw rules: raw_rules.md
   - Platforms:
-    - Platforms: platforms/platforms.md
+    - platforms/index.md
     - Splunk: platforms/splunk.md
     - Elastic Security: platforms/elastic_security.md
     - Microsoft Sentinel: platforms/microsoft_sentinel.md
@@ -50,6 +56,11 @@ markdown_extensions:
       custom_checkbox: true
   - pymdownx.tabbed:
       alternate_style: true
+  - attr_list
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 repo_url: https://github.com/certeu/droid
 repo_name: certeu/droid
