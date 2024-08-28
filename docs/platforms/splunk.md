@@ -1,16 +1,10 @@
-# Platforms
-
-The following platforms are supported for the search and export features:
-
-- Splunk
-- Microsoft Sentinel
-- Microsoft Defender for Endpoint (only through Microsoft Sentinel for now)
-
-???+ info
-
-    Additional platform support will be added in future updates.
-
-## Splunk
+- [x] Search feature
+- [x] Export feature
+    * [x] Remove detection rules
+    * [x] Disable detection rules
+- [x] Detection rule actions
+    * [x] Email
+    * [x] Webhook
 
 To use Splunk, the following sections are required:
 
@@ -127,48 +121,3 @@ actions = "webhook"
 ```
 
 1.  Place your webhook URL or replace it in your env variable.
-
-## Microsoft Sentinel
-
-### Authentication
-
-Two authentication mode are supported:
-
-- `default`: Default authentication via `az login`
-- `app`: Azure Registration App
-
-When using the default authentication:
-
-1. Head to `portal.azure.com` and authenticate using MFA
-2. Use `az cli` to fetch the authentication session
-
-When using the Azure Registation App, load the following environment variables:
-
-- `DROID_AZURE_TENANT_ID`: Azure tenant ID
-- `DROID_AZURE_CLIENT_ID`: Client ID of the registration app
-- `DROID_AZURE_CLIENT_SECRET`: Azure client secret
-
-The keys `workspace_id` and `workspace_name` are the base workspace declaration but this values can be replaced with the environments `DROID_AZURE_WORKSPACE_ID` and `DROID_AZURE_WORKSPACE_NAME`.
-
-## Microsoft Defender for Endpoint
-
-???+ warning
-
-    There are currently limitations with Microsoft Defender for Endpoint (MDE). The full integration of the search and export feature is pending but using this platform is possible through Microsoft Sentinel. Just use the argument `-sm`.
-
-```toml
-[platforms.microsoft_defender]
-
-## For searches
-
-days_ago = 30
-timeout = 120 # Search timeout for azure
-
-## Authentication
-
-search_auth = "default"
-export_auth = "default"
-```
-
-
-

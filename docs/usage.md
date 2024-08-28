@@ -47,7 +47,7 @@ droid -cf droid_config.toml --platform splunk \
 
 ???+ note
 
-    This features works only with the [supported platforms](./platforms.md).
+    This features works only with the [supported platforms](./platforms/index.md).
 
 ???+ info
 
@@ -111,7 +111,7 @@ droid -cf droid_config.toml --platform splunk \
 
 ## Test using Atomic Red Team
 
-???+ note
+???+ example
 
     This feature is under development, stay tuned!
 
@@ -131,7 +131,7 @@ droid -cf droid_config.toml --platform splunk \
 
 ???+ info
 
-    This feature verify if the title, description and the rule search match the platform's saved search.
+    This feature verify if the id, description and rule search match the platform's saved search.
 
 ```bash
 droid -cf droid_config.toml --platform splunk \
