@@ -46,9 +46,19 @@ The keys `workspace_id` and `workspace_name` are the base workspace declaration 
 
     When using the default authentication, set the `tenant_id` in the configuration
 
+### Permissions
+
+The required permissions for the app registration are the following:
+
+| Microsoft Graph | Type | Description |
+| --- | --- | --- |
+|   CustomDetection.ReadWrite.All       | Application | Read and write all custom detection rules |
+|   ThreatHunting.Read.All       | Application | Run hunting queries |
+
+
 ### Supported Platforms
 
-Both Sigma and raw rules are supported under the platform name "microsoft365defender".
+Both Sigma and raw rules are supported under the platform name `microsoft_defender`.
 
 ### Main config
 
@@ -62,14 +72,14 @@ Both Sigma and raw rules are supported under the platform name "microsoft365defe
 
 ```toml
 [platforms]
-[platforms.microsoft365defender]
+[platforms.microsoft_defender]
 
 search_auth = "app"
 export_auth = "app"
 query_period = "1h"
 alert_prefix = "SIGMA"
 
-[platforms.microsoft365defender.pipelines.process_creation]
+[platforms.microsoft_defender.pipelines.process_creation]
 pipelines = ["microsoft_365_defender"]
 product = "windows"
 category = "process_creation"
