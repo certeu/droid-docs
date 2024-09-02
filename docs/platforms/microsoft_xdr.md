@@ -40,6 +40,24 @@ When using the Azure Registation App, load the following environment variables:
 - `DROID_AZURE_CLIENT_ID`: Client ID of the registration app
 - `DROID_AZURE_CLIENT_SECRET`: Azure client secret
 
+Alternatively you can add a credential file config to the toml file:
+
+```toml
+[platforms]
+[platforms.microsoft_defender]
+credential_file = "microsoft365defender-authentication.yml"
+```
+
+The file should look like this:
+
+```yaml
+client_id: 123456
+client_secret: 123456
+tenant_id: 123456
+```
+
+This will take precedence over the environment variables.
+
 The keys `workspace_id` and `workspace_name` are the base workspace declaration but this values can be replaced with the environments `DROID_AZURE_WORKSPACE_ID` and `DROID_AZURE_WORKSPACE_NAME`.
 
 ???+ note
@@ -69,6 +87,7 @@ Both Sigma and raw rules are supported under the platform name `microsoft_defend
 | query_period | Yes       | N/A           | The period of time the query should run over. Accepted Values are: 1h, 3h, 12h, 24h or 0 for near realtime, however this only works on quick queries, Sigma queries should always be OK, but RAW rules might not work |
 | alert_prefix | No        | None         | Prefix for the exported rule name  |
 | tenant_id | No        | None         | Tenant ID when using "default" |
+|credential_file|No|None|A YAML file with your credentials if you do not want to use the environment variables|
 
 ```toml
 [platforms]
