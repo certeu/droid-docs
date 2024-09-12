@@ -7,10 +7,6 @@
     * [x] Export in multiple tenants
 - [ ] Detection rule actions
 
-### Limitations
-
-Since no stable PySigma backend is currently available, only raw rules are supported.
-
 ???+ note
 
     It is possible to deploy Microsoft Defender for Endpoint rules to Sentinel using the the `sm` argument.

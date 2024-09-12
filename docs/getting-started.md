@@ -42,8 +42,8 @@ For instance, if you intend to use the following backends:
 
 ```bash
 pip install pysigma-backend-splunk
-pip install pySigma-backend-microsoft365defender
-pip install pySigma-backend-azure
+pip install pysigma-backend-kusto
+pip install pySigma-backend-elasticsearch
 ```
 
 ???+ note

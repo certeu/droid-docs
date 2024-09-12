@@ -20,7 +20,7 @@
 
 ### Limitations
 
-Since the PySigma backend [microsoft365defender](https://github.com/AttackIQ/pySigma-backend-microsoft365defender) does not yet support correlation rules only standard sigma and raw rules are supported.
+Since the PySigma backend [pySigma-backend-kusto](https://github.com/AttackIQ/pySigma-backend-kusto) does not yet support correlation rules only standard sigma and raw rules are supported.
 
 ### Authentication
 
@@ -44,7 +44,7 @@ Alternatively you can add a credential file config to the toml file:
 
 ```toml
 [platforms]
-[platforms.microsoft_defender]
+[platforms.microsoft_xdr]
 credential_file = "microsoft365defender-authentication.yml"
 ```
 
@@ -76,7 +76,7 @@ The required permissions for the app registration are the following:
 
 ### Supported Platforms
 
-Both Sigma and raw rules are supported under the platform name `microsoft_defender`.
+Both Sigma and raw rules are supported under the platform name `microsoft_xdr`.
 
 ### Main config
 
@@ -91,18 +91,17 @@ Both Sigma and raw rules are supported under the platform name `microsoft_defend
 
 ```toml
 [platforms]
-[platforms.microsoft_defender]
+[platforms.microsoft_xdr]
 
 search_auth = "app"
 export_auth = "app"
 query_period = "1h"
 alert_prefix = "SIGMA"
 
-[platforms.microsoft_defender.pipelines.process_creation]
-pipelines = ["microsoft_365_defender"]
+[platforms.microsoft_xdr.pipelines.process_creation]
+pipelines = ["pipelines/some_pipeline.yml", "microsoft_365_defender"]
 product = "windows"
 category = "process_creation"
-
 ...
 ```
 
