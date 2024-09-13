@@ -30,7 +30,7 @@ hide:
     This requires a validation configuration, see [here](./configuration.md#configure-the-validation).
 
 ```bash
-droid -cf droid_config.toml --platform microsoft_defender \
+droid -cf droid_config.toml --platform microsoft_xdr \
 --rules sigma/sigmahq-core/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml \
 --validate
 ```
@@ -54,23 +54,23 @@ droid -cf droid_config.toml --platform splunk \
     `droid` will report for findings as per the configured search timerange in your configuration. If there is any hit, it will raise a **warning** but not an error exit-code.
 
 ```bash
-droid -cf droid_config.toml --platform azure \
+droid -cf droid_config.toml --platform microsoft_sentinel \
 --rules sigma/sigmahq-core/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml \
 --search
 ```
 
-You can use the search feature for Microsoft for Endpoint with Microsoft Sentinel as a search head.
+You can use the search feature to use Microsoft XDR converted rules with Microsoft Sentinel as a search head. This will use your Microsoft Sentinel setup to search. It's also compatible with the `-mssp` mode.
 
 ```bash
-droid -cf droid_config.toml --platform microsoft_defender \
+droid -cf droid_config.toml --platform microsoft_xdr \
 --rules sigma/sigmahq-core/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml \
---search --sentinel-mde
+--search --sentinel-xdr
 ```
 
 [MSSP mode](#mssp-mode) for Microsoft Sentinel:
 
 ```bash
-droid -cf droid_config.toml --platform azure --rules sigma/sigmahq-core/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml --search --mssp
+droid -cf droid_config.toml --platform microsoft_sentinel --rules sigma/sigmahq-core/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml --search --mssp
 ```
 
 `droid` will report for any findings.
@@ -84,7 +84,7 @@ droid -cf droid_config.toml --platform azure --rules sigma/sigmahq-core/windows/
 
     Prerequisites:
 
-    - The Azure account used by Sentinel needs to have the ability to query all the subscriptions resources via Azure Graph Query
+    - The Azure account used by Microsoft Sentinel needs to have the ability to query all the subscriptions resources via Azure Graph Query
     - A graph query listing all the Microsoft Sentinel workspaces resource ids along with the workspace name
 
 ???+ note
