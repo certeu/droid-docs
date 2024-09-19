@@ -31,3 +31,97 @@ When using the Azure Registation App, load the following environment variables:
 
 The keys `workspace_id` and `workspace_name` are the base workspace declaration but this values can be replaced with the environments `DROID_AZURE_WORKSPACE_ID` and `DROID_AZURE_WORKSPACE_NAME`.
 
+???+ note
+
+    The authentication method can be provided using the environment variables `DROID_MS_CLOUD_SEARCH_AUTH` and `DROID_MS_CLOUD_EXPORT_AUTH`. This will override the parameters `search_auth` and `export_auth` from the TOML configuration.
+
+### Permissions
+
+The required permissions are:
+
+| Role | Type | Description |
+| --- | --- | --- |
+|  Microsoft Contributor | SecurityInsights | Ability to perform Hunting queries and edit detection rules |
+|  Read access   | Azure Resource Graph | MSSP: Read all the resources of any subscription |
+
+### Main config
+
+| Parameter          | Mandatory | Type Value | Description                                                                 |
+| ------------------ | --------- | ------------- | --------------------------------------------------------------------------- |
+| search_auth        | Yes       | String        | Authentication method: "app" or "default".                                  |
+| export_auth        | Yes       | String        | Authentication method: "app" or "default".                                  |
+| query_period       | Yes       | Integer       | The period of time the query should run over, in hours.                     |
+| query_frequency    | Yes       | Integer       | How frequently the query should run, in hours.                              |
+| days_ago           | Yes       | Integer       | The lookback period of time when searching, in days. |
+| timeout            | Yes       | Integer       | Search timeout in seconds.                   |
+| alert_prefix       | No        | String        | Prefix for the exported alert.                                              |
+| threshold_operator | No        | String        | Operator used for alert threshold comparison. Accepted values can be found [here](https://learn.microsoft.com/en-us/rest/api/securityinsights/alert-rules/create-or-update?view=rest-securityinsights-2024-03-01&tabs=HTTP#triggeroperator). |
+| threshold_value    | No        | Integer       | Threshold value for generating alerts.                                      |
+| suppress_status    | No        | Boolean       | Whether to suppress the alert or not.       |
+| suppress_period    | No        | Integer       | Time period (in hours) to suppress the alert after it triggers.             |
+| incident_status    | No        | Boolean       | Whether to create incidents for triggered alerts.                           |
+| grouping_status    | No        | Boolean       | Enable or disable grouping of alerts into incidents.                        |
+| grouping_period    | No        | Integer       | Time window (in hours) for grouping alerts into incidents.                  |
+| grouping_reopen    | No        | Boolean       | Whether to reopen closed incidents if new alerts match the group criteria.  |
+| grouping_method    | No        | String        | Method for grouping alerts. Accepted values can be found [here](https://learn.microsoft.com/en-us/rest/api/securityinsights/alert-rules/create-or-update?view=rest-securityinsights-2024-03-01&tabs=HTTP#matchingmethod)"  |
+| workspace_id       | Yes       | String        | Workspace ID used for search queries.                                       |
+| workspace_name     | Yes       | String        | Name of the base workspace.                                                 |
+| subscription_id    | Yes       | String        | Subscription ID required for setting alerts.                                |
+| resource_group     | Yes       | String        | Resource group name for setting alerts                   |
+
+```toml
+
+[platforms.microsoft_sentinel]
+
+## For searches
+
+days_ago = 30
+timeout = 120
+
+## For alerts
+alert_prefix = "[PLANET-EXPRESS]"
+query_frequency = 1
+query_period = 14
+threshold_operator = "GreaterThan"
+threshold_value = 1
+suppress_status = true
+suppress_period = 2
+incident_status = true
+grouping_status = true
+grouping_period = 5
+grouping_reopen = false
+grouping_method = "AllEntities"
+
+## Authentication
+
+search_auth = "app"
+export_auth = "app"
+
+workspace_id = "d32b8ab7-650e-4dcb-b576-461827daf5b1"
+workspace_name = "sentinel-planet_express-prod"
+subscription_id = "2b27a0e0-8e25-46fe-b2a6-3fcaed7cad57"
+resource_group = "planet_express_resource_group"
+...
+```
+
+### MSSP export
+
+When exporting detection rules using the MSSP mode, droid will try to export detection rules to all accessible Microsoft Sentinel workspaces found via Azure Resource Graph.
+
+However, it is possible to export only to a restricted list of Microsoft Sentinel workspaces using dictionaries in `export_list_mssp`.
+
+```toml
+
+[platforms.microsoft_sentinel.export_list_mssp.momcorp]
+
+workspace_name = "momcorp_sentinel"
+resource_group_name = "momcorp_resource_group_prod"
+subscription_id = "98b80a67-4fec-424c-8f06-56be08deae77"
+
+[platforms.microsoft_sentinel.export_list_mssp.doop]
+
+workspace_name = "doop_sentinel"
+resource_group_name = "doop_resource_group_prod"
+subscription_id = "94406b12-28d7-4505-9bfc-fade6ec9a560"
+```
+

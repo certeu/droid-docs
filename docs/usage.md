@@ -77,25 +77,12 @@ droid -cf droid_config.toml --platform microsoft_sentinel --rules sigma/sigmahq-
 
 ### MSSP mode
 
-`droid` comes with an MSSP mode (`--mssp`). Currently, this mode allows to query multiple Sentinel workspaces for one or multiple Sigma rules. To achieve that, `droid` will first list all the Microsoft Sentinel workspaces using a Azure Graph Query and will query all the workspaces with parallel tasks.
+`droid` comes with an MSSP mode (`--mssp`). Currently, this mode allows to query multiple Microsoft Sentinel workspaces for one or multiple rules. To achieve that, `droid` will first list all the Microsoft Sentinel workspaces using an Azure Resource Graph query and will query all the workspaces with parallel tasks.
 
 
 ???+ info
 
-    Prerequisites:
-
-    - The Azure account used by Microsoft Sentinel needs to have the ability to query all the subscriptions resources via Azure Graph Query
-    - A graph query listing all the Microsoft Sentinel workspaces resource ids along with the workspace name
-
-???+ note
-
-    You will find in the droid configuration example a pre-cooked query for that.
-
-```toml
-...
-graph_query = 'resources | where name contains "SecurityInsights" | extend workspaceId = tostring(properties.workspaceResourceId) | project name, workspaceId'
-...
-```
+    The MSSP mode requires to have the proper permissions as outlined in the Microsoft Sentinel [permissions section](./platforms/microsoft_sentinel.md#permissions).
 
 ## Convert
 
