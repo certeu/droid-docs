@@ -33,7 +33,7 @@ The keys `workspace_id` and `workspace_name` are the base workspace declaration 
 
 ???+ note
 
-    The authentication method can be provided using environment variable `DROID_MS_CLOUD_SEARCH_AUTH` and `DROID_MS_CLOUD_EXPORT_AUTH`. This will override the parameter `search_auth` and `export_auth` from the TOML configuration.
+    The authentication method can be provided using the environment variables `DROID_MS_CLOUD_SEARCH_AUTH` and `DROID_MS_CLOUD_EXPORT_AUTH`. This will override the parameters `search_auth` and `export_auth` from the TOML configuration.
 
 ### Permissions
 
