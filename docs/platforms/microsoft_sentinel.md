@@ -29,7 +29,12 @@ When using the Azure Registation App, load the following environment variables:
 - `DROID_AZURE_CLIENT_ID`: Client ID of the registration app
 - `DROID_AZURE_CLIENT_SECRET`: Azure client secret
 
-The keys `workspace_id` and `workspace_name` are the base workspace declaration but this values can be replaced with the environments `DROID_AZURE_WORKSPACE_ID` and `DROID_AZURE_WORKSPACE_NAME`.
+The keys `workspace_id`, `workspace_name`, `subscription_id` and `resource_group` are the base workspace declaration but they can be replaced with the following environment variables:
+
+- `DROID_AZURE_WORKSPACE_ID`
+- `DROID_AZURE_WORKSPACE_NAME`
+- `DROID_AZURE_SUBSCRIPTION_ID`
+- `DROID_AZURE_RESOURCE_GROUP`
 
 ???+ note
 
