@@ -39,9 +39,13 @@ droid -cf droid_config.toml --platform microsoft_xdr \
 
 ```bash
 droid -cf droid_config.toml --platform splunk \
---rules sigma/sigmahq-core/windows/ \
+--rules rules/sigma/ \
 --compile -d
 ```
+
+???+ info
+
+    If you want to use the [Sigma filters](https://sigmahq.io/docs/meta/filters.html), you can store your filters in a directory and use the `sigma_filters_directory` parameter. See the [configuration](./configuration.md#configure-the-basics).
 
 ## Search
 
@@ -67,34 +71,13 @@ droid -cf droid_config.toml --platform microsoft_xdr \
 --search --sentinel-xdr
 ```
 
-[MSSP mode](#mssp-mode) for Microsoft Sentinel:
+## MSSP
+
+Currently the [MSSP mode](./platforms/microsoft_sentinel.md#mssp-mode) is available for Microsoft Sentinel.
 
 ```bash
 droid -cf droid_config.toml --platform microsoft_sentinel --rules sigma/sigmahq-core/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml --search --mssp
 ```
-
-`droid` will report for any findings.
-
-### MSSP mode
-
-`droid` comes with an MSSP mode (`--mssp`). Currently, this mode allows to query multiple Microsoft Sentinel workspaces for one or multiple rules. To achieve that, `droid` will first list all the Microsoft Sentinel workspaces using an Azure Resource Graph query and will query all the workspaces with parallel tasks.
-
-
-???+ info
-
-    The MSSP mode requires to have the proper permissions as outlined in the Microsoft Sentinel [permissions section](./platforms/microsoft_sentinel.md#permissions).
-
-## Convert
-
-```bash
-droid -cf droid_config.toml --platform splunk \
---rules rules/sigma/ \
---compile -d
-```
-
-???+ info
-
-    If you want to use the [Sigma filters](https://sigmahq.io/docs/meta/filters.html), you can store your filters in a directory and use the `sigma_filters_directory` parameter. See the [configuration](./configuration.md#configure-the-basics).
 
 ## Test using Atomic Red Team
 

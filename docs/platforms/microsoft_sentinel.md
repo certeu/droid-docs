@@ -33,7 +33,7 @@ The keys `workspace_id` and `workspace_name` are the base workspace declaration 
 
 ???+ note
 
-    The authentication method can be provided using the environment variables `DROID_MS_CLOUD_SEARCH_AUTH` and `DROID_MS_CLOUD_EXPORT_AUTH`. This will override the parameters `search_auth` and `export_auth` from the TOML configuration.
+    The authentication method can be provided using the environment variables `DROID_AZURE_SEARCH_AUTH` and `DROID_AZURE_EXPORT_AUTH`. This will override the parameters `search_auth` and `export_auth` from the TOML configuration.
 
 ### Permissions
 
@@ -104,24 +104,33 @@ resource_group = "planet_express_resource_group"
 ...
 ```
 
-### MSSP export
+### MSSP mode
 
-When exporting detection rules using the MSSP mode, droid will try to export detection rules to all accessible Microsoft Sentinel workspaces found via Azure Resource Graph.
+The MSSP mode (`--mssp`) in Microsoft Sentinel allows to perform various operations involving multiple workspaces.
 
-However, it is possible to export only to a restricted list of Microsoft Sentinel workspaces using dictionaries in `export_list_mssp`.
+When searching (`--search`), this mode allows to query multiple Microsoft Sentinel workspaces for one or multiple rules. To achieve that, `droid` will first list all the Microsoft Sentinel workspaces using an Azure Resource Graph query and will query all the workspaces with parallel tasks.
+
+This mode also allows to export (`--export`) detection rules to specific Microsoft Sentinel workspaces included in the droid configuration file.
+
+To designate the Microsoft Sentinel workspaces, define them under the `export_list_mssp` section as a dictionary.
 
 ```toml
 
 [platforms.microsoft_sentinel.export_list_mssp.momcorp]
 
 workspace_name = "momcorp_sentinel"
+tenant_id = "10e5ca4d-25ac-4d17-ae8d-0314ff0d8d44"
 resource_group_name = "momcorp_resource_group_prod"
 subscription_id = "98b80a67-4fec-424c-8f06-56be08deae77"
 
 [platforms.microsoft_sentinel.export_list_mssp.doop]
 
 workspace_name = "doop_sentinel"
+tenant_id = "900b0bdf-4de1-48bb-bda4-862f638a92ac"
 resource_group_name = "doop_resource_group_prod"
 subscription_id = "94406b12-28d7-4505-9bfc-fade6ec9a560"
 ```
 
+???+ note
+
+    The integrity feature (`--integrity`) is also available.
