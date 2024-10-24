@@ -106,7 +106,23 @@ workspace_id = "d32b8ab7-650e-4dcb-b576-461827daf5b1"
 workspace_name = "sentinel-planet_express-prod"
 subscription_id = "2b27a0e0-8e25-46fe-b2a6-3fcaed7cad57"
 resource_group = "planet_express_resource_group"
-...
+
+## Pipelines example
+
+[platforms.microsoft_sentinel.pipelines]
+
+    [platforms.microsoft_sentinel.pipelines.windows_process_creation]
+
+    pipelines = ["pipelines/sentinel_process_creation.yml", "azure_monitor"]
+    product = "windows"
+    category = "process_creation"
+
+    [platforms.microsoft_sentinel.pipelines.windows_file_event]
+
+    pipelines = ["pipelines/sentinel_file_event.yml"]
+    product = "windows"
+    category = "file_event"
+
 ```
 
 ### MSSP mode
@@ -121,19 +137,21 @@ To designate the Microsoft Sentinel workspaces, define them under the `export_li
 
 ```toml
 
-[platforms.microsoft_sentinel.export_list_mssp.momcorp]
+[platforms.microsoft_sentinel.export_list_mssp]
 
-workspace_name = "momcorp_sentinel"
-tenant_id = "10e5ca4d-25ac-4d17-ae8d-0314ff0d8d44"
-resource_group_name = "momcorp_resource_group_prod"
-subscription_id = "98b80a67-4fec-424c-8f06-56be08deae77"
+    [platforms.microsoft_sentinel.export_list_mssp.momcorp]
 
-[platforms.microsoft_sentinel.export_list_mssp.doop]
+    workspace_name = "momcorp_sentinel"
+    tenant_id = "10e5ca4d-25ac-4d17-ae8d-0314ff0d8d44"
+    resource_group_name = "momcorp_resource_group_prod"
+    subscription_id = "98b80a67-4fec-424c-8f06-56be08deae77"
 
-workspace_name = "doop_sentinel"
-tenant_id = "900b0bdf-4de1-48bb-bda4-862f638a92ac"
-resource_group_name = "doop_resource_group_prod"
-subscription_id = "94406b12-28d7-4505-9bfc-fade6ec9a560"
+    [platforms.microsoft_sentinel.export_list_mssp.doop]
+
+    workspace_name = "doop_sentinel"
+    tenant_id = "900b0bdf-4de1-48bb-bda4-862f638a92ac"
+    resource_group_name = "doop_resource_group_prod"
+    subscription_id = "94406b12-28d7-4505-9bfc-fade6ec9a560"
 ```
 
 ???+ note

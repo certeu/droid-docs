@@ -99,7 +99,7 @@ query_period = "1h"
 alert_prefix = "SIGMA"
 
 [platforms.microsoft_xdr.pipelines.process_creation]
-pipelines = ["pipelines/some_pipeline.yml", "microsoft_365_defender"]
+pipelines = ["pipelines/xdr_process_creation.yml", "microsoft_xdr"]
 product = "windows"
 category = "process_creation"
 ...
