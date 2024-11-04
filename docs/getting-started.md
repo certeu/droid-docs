@@ -28,7 +28,7 @@ If you already have a repository containing all your Sigma rules or if you wish 
     pip install detect-droid=="0.1.X"
     ```
 
-[Python package]: https://pypi.org/project/droid/
+[Python package]: https://pypi.org/project/detect-droid/
 
 ### Install the Sigma [backends]
 
