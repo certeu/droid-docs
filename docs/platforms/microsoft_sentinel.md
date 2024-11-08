@@ -157,3 +157,29 @@ To designate the Microsoft Sentinel workspaces, define them under the `export_li
 ???+ note
 
     The integrity feature (`--integrity`) is also available.
+
+### Sigma Custom Fields
+
+| Custom Field   | Values     | Description                                                                                   |
+| -------------- | ---------- | --------------------------------------------------------------------------------------------- |
+| disabled       | true/false | Set to true if you want to disable the rule                                                   |
+| removed        | true/false | Set to true if you want to delete the rule                                                    |
+| query_frequency| integer    | Run query every X hour |
+| query_period | integer       | Lookup data from the last X hour  |
+| entity_mappings | dict       | Configure the entity mappings  |
+
+Use the following example to configure the entity mappings in a Sigma rule:
+
+```yaml
+...
+custom:
+  entity_mappings:
+    - entity_type: IP
+      field_mappings:
+        - identifier: Address
+          column_name: RemoteIP
+    - entity_type: Host
+      field_mappings:
+        - identifier: HostName
+          column_name: DeviceName
+```

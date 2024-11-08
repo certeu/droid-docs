@@ -107,8 +107,6 @@ category = "process_creation"
 
 ### Sigma Custom Fields
 
-The Custom Fields available with the Elastic Integration are:
-
 | Custom Field   | Values     | Description                                                                                   |
 | -------------- | ---------- | --------------------------------------------------------------------------------------------- |
 | disabled       | true/false | Set to true if you want to disable the rule                                                   |
