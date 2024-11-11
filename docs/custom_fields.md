@@ -10,6 +10,10 @@ Additionally:
 - `ignore_search` to `True` will skip the search step
 - `ignore_export_error` to `True` will ignore the export error and integrity error
 
+???+ info
+
+    The `ignore_export_error` option currently only works with raw detection rules.
+
 Some of the settings placed in your `droid` configuration file can be replaced as well.
 
 ```yaml title="example_sigma.yml" hl_lines="25-36"
