@@ -5,7 +5,10 @@ You can place custom fields in your rules to:
 - Disable a rule: `disabled: True`
 - Remove a rule: `removed: True`
 
-Additionally, using `ignore_search` to `True` will disable the search when using the argument `-s`.
+Additionally:
+
+- `ignore_search` to `True` will skip the search step
+- `ignore_export_error` to `True` will ignore the export error and integrity error
 
 Some of the settings placed in your `droid` configuration file can be replaced as well.
 
@@ -38,6 +41,7 @@ custom:
     #ignore_search: True
     disabled: True
     #removed: True
+    #ignore_export_error: True
     earliest_time: -1h@h
     latest_time: now
     cron_schedule: '5 * * * *'
