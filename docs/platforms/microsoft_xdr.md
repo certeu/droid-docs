@@ -98,10 +98,12 @@ Both Sigma and raw rules are supported under the platform name `microsoft_xdr`.
 | ------------ | --------- | ------------- | -------------- |
 | search_auth  | Yes       | N/A           | Authentication method: "app" or "default" |
 | export_auth  | Yes       | N/A           | Authentication method: "app" or "default" |
+| days_ago     | No        | 1             | The lookback period time when using the search feature expressed in days (from 1 to 30) |
 | query_period | Yes       | N/A           | The period of time the query should run over. Accepted Values are: 1h, 3h, 12h, 24h or 0 for near realtime, however this only works on quick queries, Sigma queries should always be OK, but RAW rules might not work |
-| alert_prefix | No        | None         | Prefix for the exported rule name  |
+| alert_prefix | No        | None          | Prefix for the exported rule name  |
 | tenant_id | No        | None         | Tenant ID when using "default" |
 |credential_file|No|None|A YAML file with your credentials if you do not want to use the environment variables|
+|auth_cert|No|None|A certificate file (PEM) when using the certificate-based authentication|
 
 ```toml
 [platforms]
@@ -110,6 +112,7 @@ Both Sigma and raw rules are supported under the platform name `microsoft_xdr`.
 search_auth = "app"
 export_auth = "app"
 query_period = "1h"
+days_ago = 3
 alert_prefix = "SIGMA"
 
 [platforms.microsoft_xdr.pipelines.process_creation]
