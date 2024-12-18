@@ -2,9 +2,9 @@
 - [x] Export feature
     * [x] Remove detection rules
     * [x] Disable detection rules
-- [ ] MSSP feature
-    * [ ] Search in multiple tenants
-    * [ ] Search in multiple tenants
+- [x] MSSP feature
+    * [x] Search in multiple tenants
+    * [x] Export in multiple tenants
 - [x] Detection rule actions
     * [x] forceUserPasswordReset
     * [x] disableUser
