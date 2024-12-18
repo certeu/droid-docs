@@ -58,6 +58,20 @@ tenant_id: 123456
 
 This will take precedence over the environment variables.
 
+For certificate-based authentication, you can add the following configuration:
+
+```toml
+[platforms]
+[platforms.microsoft_xdr]
+auth_cert = "your_cert_file.pem"
+```
+
+Replace `your_cert_file.pem` with the path to your certificate file. This method will use the provided certificate for authentication. The certificate password is only needed if the private key. To provide a password you can use the environment variable `DROID_AZURE_CERT_PASS` or use `cert_pass: "password"` in the credential file.
+
+???+ note
+
+    The PEM file specified in the `auth_cert` configuration must contain both the private key and the public key, as the public key is used for fingerprinting purposes.
+
 The keys `workspace_id` and `workspace_name` are the base workspace declaration but this values can be replaced with the environments `DROID_AZURE_WORKSPACE_ID` and `DROID_AZURE_WORKSPACE_NAME`.
 
 ???+ note
