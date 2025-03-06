@@ -158,6 +158,14 @@ To designate the Microsoft Sentinel workspaces, define them under the `export_li
 
     The integrity feature (`--integrity`) is also available.
 
+When using the search mode along with the `--mssp` argument you can exclude some workspaces from the search.
+
+```toml
+[platforms.microsoft_sentinel]
+...
+mssp_search_exclude_list = ["Foo", "Sentinel3"]
+```
+
 ### Sigma Custom Fields
 
 | Custom Field   | Values     | Description                                                                                   |
