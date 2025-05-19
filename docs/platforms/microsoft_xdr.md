@@ -78,6 +78,22 @@ The keys `workspace_id` and `workspace_name` are the base workspace declaration 
 
     When using the default authentication, set the `tenant_id` in the configuration
 
+**Custom authentication via hook**:
+
+We have also added the ability retrieve Azure Tokens from any custom app via a hook.
+
+If the environment variable `DROID_AZURE_TOKEN_HOOK` is set with a URL, the hook attempts to acquire the token from that URL via a `GET` request. The response should contain a JSON object with the `access_token` key, which will be used as the token.
+
+The hook function  supports dynamic URL configuration using placeholders:
+
+- `{TENANT_ID}`: Replaced with the provided or default tenant ID.
+
+Additional infos:
+
+- Uses the cached token if it is still valid and the scope matches.
+- Supports retries for token retrieval, with retry count and delay.
+- If `DROID_AZURE_TOKEN_X_API_KEY` environment variable is present, it will be included in the request headers.
+
 ### Permissions
 
 The required permissions for the app registration are the following:

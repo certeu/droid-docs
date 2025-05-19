@@ -40,6 +40,23 @@ The keys `workspace_id`, `workspace_name`, `subscription_id` and `resource_group
 
     The authentication method can be provided using the environment variables `DROID_AZURE_SEARCH_AUTH` and `DROID_AZURE_EXPORT_AUTH`. This will override the parameters `search_auth` and `export_auth` from the TOML configuration.
 
+**Custom authentication via hook**:
+
+We have also added the ability retrieve Azure Tokens from any custom app via a hook.
+
+If the environment variable `DROID_AZURE_TOKEN_HOOK` is set with a URL, the hook attempts to acquire the token from that URL via a `GET` request. The response should contain a JSON object with the `access_token` key, which will be used as the token.
+
+The hook function  supports dynamic URL configuration using placeholders:
+
+- `{TENANT_ID}`: Replaced with the provided or default tenant ID.
+- `{SCOPE}`: Replaced with the requested scope.
+
+Additional infos:
+
+- Uses the cached token if it is still valid and the scope matches.
+- Supports retries for token retrieval, with retry count and delay.
+- If `DROID_AZURE_TOKEN_X_API_KEY` environment variable is present, it will be included in the request headers.
+
 ### Permissions
 
 The required permissions are:
