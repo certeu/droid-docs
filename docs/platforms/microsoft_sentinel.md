@@ -192,8 +192,9 @@ mssp_search_exclude_list = ["Foo", "Sentinel3"]
 | query_frequency| integer    | Run query every X hour |
 | query_period | integer       | Lookup data from the last X hour  |
 | entity_mappings | dict       | Configure the entity mappings  |
+| sentinel_entity_mappings | dict       | Configure the sentinel entity mappings  |
 
-Use the following example to configure the entity mappings in a Sigma rule:
+Use the following example to configure the entity mappings and sentinel entity mappings in a Sigma rule:
 
 ```yaml
 ...
@@ -207,4 +208,7 @@ custom:
       field_mappings:
         - identifier: HostName
           column_name: DeviceName
+  sentinel_entities:
+    - fieldA
+    - fieldB
 ```
