@@ -40,7 +40,7 @@ droid -cf droid_config.toml --platform microsoft_xdr \
 ```bash
 droid -cf droid_config.toml --platform splunk \
 --rules rules/sigma/ \
---compile -d
+--convert -d
 ```
 
 ???+ info
