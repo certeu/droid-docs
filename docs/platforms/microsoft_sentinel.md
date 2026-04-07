@@ -146,9 +146,9 @@ resource_group = "planet_express_resource_group"
 
 The MSSP mode (`--mssp`) in Microsoft Sentinel allows to perform various operations involving multiple workspaces.
 
-When searching (`--search`), this mode allows to query multiple Microsoft Sentinel workspaces for one or multiple rules. To achieve that, `droid` will first list all the Microsoft Sentinel workspaces using an Azure Resource Graph query and will query all the workspaces with parallel tasks.
+When using `droid rules search`, this mode allows to query multiple Microsoft Sentinel workspaces for one or multiple rules. To achieve that, `droid` will first list all the Microsoft Sentinel workspaces using an Azure Resource Graph query and will query all the workspaces with parallel tasks.
 
-This mode also allows to export (`--export`) detection rules to specific Microsoft Sentinel workspaces included in the droid configuration file.
+This mode also allows to export (`droid rules export`) detection rules to specific Microsoft Sentinel workspaces included in the droid configuration file.
 
 To designate the Microsoft Sentinel workspaces, define them under the `export_list_mssp` section as a dictionary.
 
@@ -173,7 +173,7 @@ To designate the Microsoft Sentinel workspaces, define them under the `export_li
 
 ???+ note
 
-    The integrity feature (`--integrity`) is also available.
+    The integrity feature (`droid rules integrity`) is also available.
 
 When using the search mode along with the `--mssp` argument you can exclude some workspaces from the search.
 
