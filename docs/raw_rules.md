@@ -18,7 +18,7 @@ sigma_validation_config = "validation/validate.yml"
 
 ???+ note
 
-    In the above example base configuration file, if we're using `droid -cf droid_config.toml -r rules/raw/splunk -p splunk -i` `droid` will match `rules/raw` and will enable the raw rules features.
+    In the above example base configuration file, if we're using `droid rules integrity -r rules/raw/splunk -c droid_config.toml -p splunk` `droid` will match `rules/raw` and will enable the raw rules features.
 
 ## Usage
 

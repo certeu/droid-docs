@@ -15,11 +15,13 @@ hide:
 
 ???+ note
 
-    `droid` is a command line tool.
+    `droid` is a command line tool using subcommands.
 
-    - Make sure to precise the droid configuration file using `-cf`
+    - Commands are grouped under `droid rules` or `droid sources`
+    - Make sure to specify the droid configuration file using `-c`
     - You can select a directory (this will load all the rules within sub-directories) or a single rule
-    - You can generate a JSON logging file using `-j`
+    - You can generate a JSON logging file using `-j` (global option, placed before the subcommand)
+    - Debug mode is enabled with `-d` or `--debug` (global option, placed before the subcommand)
 
 ---
 
@@ -30,17 +32,27 @@ hide:
     This requires a validation configuration, see [here](./configuration.md#configure-the-validation).
 
 ```bash
-droid -cf droid_config.toml --platform microsoft_xdr \
+droid rules validate \
 --rules sigma/sigmahq-core/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml \
---validate
+--config-file droid_config.toml
 ```
 
 ## Convert
 
 ```bash
-droid -cf droid_config.toml --platform splunk \
+droid rules convert \
 --rules rules/sigma/ \
---convert -d
+--config-file droid_config.toml \
+--platform splunk
+```
+
+With debug output:
+
+```bash
+droid --debug rules convert \
+--rules rules/sigma/ \
+--config-file droid_config.toml \
+--platform splunk
 ```
 
 ???+ info
@@ -58,17 +70,20 @@ droid -cf droid_config.toml --platform splunk \
     `droid` will report for findings as per the configured search timerange in your configuration. If there is any hit, it will raise a **warning** but not an error exit-code.
 
 ```bash
-droid -cf droid_config.toml --platform microsoft_sentinel \
+droid rules search \
 --rules sigma/sigmahq-core/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml \
---search
+--config-file droid_config.toml \
+--platform microsoft_sentinel
 ```
 
-You can use the search feature to use Microsoft XDR converted rules with Microsoft Sentinel as a search head. This will use your Microsoft Sentinel setup to search. It's also compatible with the `-mssp` mode.
+You can use the search feature to use Microsoft XDR converted rules with Microsoft Sentinel as a search head. This will use your Microsoft Sentinel setup to search. It's also compatible with the `--mssp` mode.
 
 ```bash
-droid -cf droid_config.toml --platform microsoft_xdr \
+droid rules search \
 --rules sigma/sigmahq-core/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml \
---search --sentinel-xdr
+--config-file droid_config.toml \
+--platform microsoft_xdr \
+--sentinel-xdr
 ```
 
 ## MSSP
@@ -76,7 +91,11 @@ droid -cf droid_config.toml --platform microsoft_xdr \
 Currently the [MSSP mode](./platforms/microsoft_sentinel.md#mssp-mode) is available for Microsoft Sentinel and Microsoft XDR.
 
 ```bash
-droid -cf droid_config.toml --platform microsoft_sentinel --rules sigma/sigmahq-core/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml --search --mssp
+droid rules search \
+--rules sigma/sigmahq-core/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml \
+--config-file droid_config.toml \
+--platform microsoft_sentinel \
+--mssp
 ```
 
 When using the MSSP mode, you have the ability to apply specific filters for designated customers. By adding `customer_name` and `customers_filters_directory` in the TOML configuration in  `platforms.<platform>.export_list_mssp.CustomerName`, `droid` will add the default filters directory from `base` AND the Sigma filters in `customer_filters_directory`.
@@ -104,9 +123,10 @@ Example:
     If you have set one or multiple rule with any of the custom field `disabled` or `removed` as `True`, `droid` will make sure it is set as disabled or remove the detection rule if it exists on the platform.
 
 ```bash
-droid -cf droid_config.toml --platform splunk \
+droid --debug rules export \
 --rules rules/rules/sigma/ \
---export -d
+--config-file droid_config.toml \
+--platform splunk
 ```
 
 ## Integrity
@@ -116,7 +136,8 @@ droid -cf droid_config.toml --platform splunk \
     This feature verify if the id, description and rule search match the platform's saved search.
 
 ```bash
-droid -cf droid_config.toml --platform splunk \
+droid --debug rules integrity \
 --rules rules/rules/sigma/ \
---integrity -d
+--config-file droid_config.toml \
+--platform splunk
 ```

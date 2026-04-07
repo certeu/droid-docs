@@ -36,7 +36,7 @@ port = "8089"
 # user and password are passed in environment variable
 
 test_earliest_time = "-24h@h" # (2)!
-test_latest_time = "now" # When using option (--search/-s) # (3)!
+test_latest_time = "now" # When using `droid rules search` # (3)!
 job_ttl = 86400 # (4)!
 acl_update_owner = "nobody" # (5)!
 acl_update_perms_read = "group1, group2" # (6)!
@@ -53,19 +53,19 @@ alert_expiration = "7d"
 
 1.  The hostname of Splunk, can be replace by an env variable.
 
-2.  Search feature (--search/-s): earliest time for the searches. It must be a Splunk time modifier.
+2.  `droid rules search`: earliest time for the searches. It must be a Splunk time modifier.
 
-3.  Search feature (--search/-s): latest time for the searches. It must be a Splunk time modifier.
+3.  `droid rules search`: latest time for the searches. It must be a Splunk time modifier.
 
-4.  Search feature (--search/-s): Set the job TTL in seconds.
+4.  `droid rules search`: Set the job TTL in seconds.
 
-5.  Search feature (--search/-s): Set the owner of the search. Useful if droid reports for findings.
+5.  `droid rules search`: Set the owner of the search. Useful if droid reports for findings.
 
-6.  Search feature (--search/-s): Set the groups read permissions.
+6.  `droid rules search`: Set the groups read permissions.
 
-7.  Export (deploy) feature (--export/-e): earliest time for the saved-searches. It must be a Splunk time modifier.
+7.  `droid rules export`: earliest time for the saved-searches. It must be a Splunk time modifier.
 
-8.  Export (deploy) feature (--export/-e): latest time for the saved-searches. It must be a Splunk time modifier.
+8.  `droid rules export`: latest time for the saved-searches. It must be a Splunk time modifier.
 
 ???+ info
 
