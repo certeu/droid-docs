@@ -22,10 +22,10 @@ If you already have a repository containing all your Sigma rules or if you wish 
     pip install detect-droid
     ```
 
-=== "0.1.X"
+=== "0.3.X"
 
     ```sh
-    pip install detect-droid=="0.1.X"
+    pip install detect-droid=="0.3.X"
     ```
 
 [Python package]: https://pypi.org/project/detect-droid/
