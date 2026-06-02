@@ -118,6 +118,49 @@ postprocessing:
 
     If droid does not find a match, it will process the Sigma rule as "non-configured" since the log sources was not configured for the given platform. For the purpose of the automation through CI/CD pipelines, droid will not issue an error exit-code for non-configured log sources.
 
+#### Correlation rule overrides
+
+Some backend formats are incompatible with Sigma [correlation rules](https://sigmahq.io/docs/meta/correlations.html). For these cases, the `[platforms.<backend>.pipelines.<group>]` section accepts two optional fields that override the pipelines and the output format **only when the rule file is a correlation rule**:
+
+- `pipelines_correlation` (list of strings): overrides `pipelines` for correlation rules.
+- `format_correlation` (string): overrides `format` for correlation rules.
+
+Both fields are optional and additive. Atomic rules in the same group are unaffected.
+
+```toml title="droid_config.toml" hl_lines="4 7"
+[platforms.splunk.pipelines.windows_process_creation]
+
+pipelines = ["splunk_windows", "pipelines/splunk_process_creation.yml"]
+pipelines_correlation = ["splunk_windows"] # (1)!
+product = "windows"
+category = "process_creation"
+format = "data_model"
+format_correlation = "default" # (2)!
+```
+
+1.  Correlation rules in this group fall back to the bare backend pipeline.
+
+2.  Correlation rules in this group are emitted as default SPL instead of `data_model`.
+
+In the example above, atomic rules convert to data-model SPL while correlation rules in the same log source group fall back to the bare backend pipeline and default SPL.
+
+??? info "Resolution semantics"
+
+    For a given rule, the effective `pipelines` and `format` are resolved as follows:
+
+    **Effective pipelines:**
+
+    - correlation rule and `pipelines_correlation` set → `pipelines_correlation`
+    - otherwise → `pipelines`
+
+    **Effective format:**
+
+    - correlation rule and `format_correlation` set → `format_correlation`
+    - else if `format` set → `format`
+    - else → `"default"`
+
+    A rule file is treated as a correlation rule if any YAML document in the file has a top-level `correlation:` key.
+
 ### Configure the validation
 
 You can validate the Sigma rules on the syntax level by leveraging the pySigma [rule validation](https://sigmahq-pysigma.readthedocs.io/en/latest/Rule_Validation.html). It requires a validation configuration file that can be placed in your repository.
