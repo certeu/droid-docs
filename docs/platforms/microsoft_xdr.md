@@ -210,7 +210,7 @@ When deploying raw, the custom field `impactedAssets` is required for the asset 
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | Device              | deviceId, deviceName                                                                                                                |
 | Mailbox             | accountUpn, initiatingProcessAccountUpn                                                                                             |
-| User                | targetAccountUpn, accountObjectId, accountSid, accountUpn, initiatingProcessAccountObjectId, initiatingProcessAccountSid, initiatingProcessAccountUpn |
+| User                | accountObjectId, accountSid, accountUpn, accountName, accountDomain, accountId, requestAccountSid, requestAccountName, requestAccountDomain, recipientObjectId, processAccountObjectId, initiatingAccountSid, initiatingProcessAccountUpn, initiatingAccountName, initiatingAccountDomain, servicePrincipalId, servicePrincipalName, targetAccountUpn |
 
 ```yaml
 custom:
@@ -219,9 +219,9 @@ custom:
     - impactedAssetType: Device
         identifier: deviceId #deviceId, deviceName
     - impactedAssetType: Mailbox
-        identifier: initiatingProcessAccountUpn #accountUpn, initiatingProcessAccountUpn
+        identifier: initiatingProcessAccountUpn 
     - impactedAssetType: User
-        identifier: initiatingProcessAccountUpn # targetAccountUpn, accountObjectId, accountSid, accountUpn, initiatingProcessAccountObjectId, initiatingProcessAccountSid, initiatingProcessAccountUpn
+        identifier: initiatingProcessAccountUpn
 ```
 
 ???+ warning
