@@ -45,6 +45,7 @@ nav:
     - Elastic Security: platforms/elastic_security.md
     - Microsoft Sentinel: platforms/microsoft_sentinel.md
     - Microsoft XDR: platforms/microsoft_xdr.md
+    - HarfangLab: platforms/harfanglab.md
   - Usage: usage.md
 
 
