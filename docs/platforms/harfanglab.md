@@ -17,11 +17,11 @@ The platform name is `harfang_lab`. It relies on the [pySigma-backend-harfanglab
 
 **Searching is not supported.** HarfangLab does not expose an endpoint to run a Sigma rule against the collected telemetry, so `droid rules search` is refused for this platform.
 
-**MSSP mode is not supported.** Both `--mssp` and `--search` are rejected before the configuration is loaded, so a misconfigured pipeline fails early rather than half way through an export.
+**MSSP mode is not supported yet.** Both `--mssp` and `--search` are rejected before the configuration is loaded, so a misconfigured pipeline fails early rather than half way through an export.
 
 **Raw rules are not supported.** Since the platform stores Sigma documents, a raw rule would carry the very content the Sigma path already produces. Rules are always treated as Sigma rules, even when they sit in the raw rules directory.
 
-**Some Sigma fields are rejected by the backend.** The following fields have no equivalent on the platform and the backend refuses any rule using one of them:
+**Some Sigma fields are rejected by the backend.** Some fields cannot be converted and the backend refuses any rule using one of them:
 
 `Hash`, `Hashes`, `Provider_Name`, `SourceCommandLine`, `TargetParentProcessId`
 
@@ -34,7 +34,7 @@ WARNING  Backend does not support one of the fields used by the rule: rules/my_r
 
 ???+ warning
 
-    `Hashes` is a common Sigma field. Expect a share of an upstream ruleset such as SigmaHQ to be skipped for this reason.
+    `Hashes` is a common Sigma field. Expect a share of an upstream ruleset such as SigmaHQ to be skipped for this reason. Use the native feature of the platform instead for this usage.
 
 ### Environment variables
 
