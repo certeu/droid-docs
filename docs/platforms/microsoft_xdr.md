@@ -138,6 +138,18 @@ category = "process_creation"
 ...
 ```
 
+### MSSP mode
+
+The MSSP mode (`--mssp`) exports the detection rules to every tenant listed under `export_list_mssp`. Each entry also accepts a `variants` key, which selects the telemetry sources that tenant carries when a log source is served by more than one. See [log source variants](../log_source_variants.md#per-customer-telemetry).
+
+```toml
+[platforms.microsoft_xdr.export_list_mssp.Zoidberg]
+
+tenant_id = "122d2a69-c233-4824-a009-a431d839d799"
+customer_name = "Zoidberg"
+customer_filters_directory = "filters/zoidberg/"
+```
+
 ### Sigma Custom Fields
 
 | Custom Field   | Values     | Description                                                                                   |

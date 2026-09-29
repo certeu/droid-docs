@@ -175,6 +175,8 @@ To designate the Microsoft Sentinel workspaces, define them under the `export_li
 
     The integrity feature (`droid rules integrity`) is also available.
 
+Each entry also accepts a `variants` key, which selects the telemetry sources that workspace carries when a log source is served by more than one. See [log source variants](../log_source_variants.md#per-customer-telemetry).
+
 When using the search mode along with the `--mssp` argument you can exclude some workspaces from the search.
 
 ```toml

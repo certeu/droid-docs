@@ -98,6 +98,10 @@ allow_skew = "67%"
     #product = "windows"
 ```
 
+???+ info
+
+    When a log source is served by several telemetry sources, a [variant](../log_source_variants.md#suppression-fields) pipeline group can declare its own `alert.suppress.fields`, since the field names of one source rarely apply to another.
+
 ### Action
 
 Using emails:
