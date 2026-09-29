@@ -161,6 +161,22 @@ In the example above, atomic rules convert to data-model SPL while correlation r
 
     A rule file is treated as a correlation rule if any YAML document in the file has a top-level `correlation:` key.
 
+#### Log source variants
+
+A log source can be served by more than one telemetry source, for instance Sysmon *and* a third-party EDR for `windows/process_creation`. Declare one pipeline group per source, give each a `variant` name and mark one of them `primary`, and `droid` will convert and deploy one query per source.
+
+```toml title="droid_config.toml" hl_lines="6 7"
+[platforms.splunk.pipelines.windows_process_creation]
+
+pipelines = ["splunk_windows", "pipelines/splunk_process_creation.yml"]
+product = "windows"
+category = "process_creation"
+variant = "sysmon"
+primary = true
+```
+
+See the [log source variants](./log_source_variants.md) page for the identity rules, the per-platform and per-customer selection, and the Splunk specifics.
+
 ### Configure the validation
 
 You can validate the Sigma rules on the syntax level by leveraging the pySigma [rule validation](https://sigmahq-pysigma.readthedocs.io/en/latest/Rule_Validation.html). It requires a validation configuration file that can be placed in your repository.

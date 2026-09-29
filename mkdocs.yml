@@ -37,6 +37,7 @@ nav:
   - Getting started:
     - Installation: getting-started.md
     - Configuration: configuration.md
+    - Log source variants: log_source_variants.md
     - Rule custom fields: custom_fields.md
     - Raw rules: raw_rules.md
   - Platforms:
