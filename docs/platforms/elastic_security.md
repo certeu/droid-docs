@@ -90,7 +90,7 @@ For Sigma rules both `esql` (ES|QL) and `eql` (EQL) are supported. However since
 
 For raw rules, both esql (ES|QL) and eql (EQL) are supported. Always use the `raw_language` custom field to specify the language used in the Sigma yaml file.
 
-For non correlation ES|QL rules, the metadata fields are automatically added to the query for better deduplication by the Elastic backend. For correlation ES|QL rules this is not needed since correlation rules are already deduplicated.
+For non correlation ES|QL rules, the metadata fields are automatically added to the query for better deduplication by the Elastic backend. Correlation ES|QL rules aggregate their events and have no `_id` to deduplicate on, droid suppresses their repeated alerts instead, see [Correlation rules](#correlation-rules).
 
 ### Query format
 
@@ -133,6 +133,88 @@ The other tags are exported as Kibana tags.
 
 Elastic has no informational severity, the risk score keeps those rules apart from the low ones.
 
+### Correlation rules
+
+[Correlation rules](https://sigmahq.io/docs/meta/correlations.html) are supported with ES|QL only. Write the correlation and the rules it references in one file:
+
+```yaml
+title: Vault Sign-In Failure
+name: vault_signin_failure
+# ...
+logsource:
+    product: vault
+    service: signin_attempts
+detection:
+    selection:
+        category: credentials_failed
+    condition: selection
+---
+title: Vault Brute Force
+# ...
+correlation:
+    type: event_count
+    rules:
+        - vault_signin_failure
+    group-by:
+        - target_user.email
+    timespan: 10m
+    condition:
+        gte: 5
+```
+
+which converts to:
+
+```
+FROM logs-signin-attempts-planet-express-default METADATA _id, _index, _version
+| WHERE `1vault.signinattempts.category`=="credentials_failed"
+| EVAL timebucket=date_trunc(10minutes, @timestamp)
+| STATS event_count=count() BY timebucket, `1vault.signinattempts.target_user.email`
+| WHERE event_count >= 5
+```
+
+| Correlation type   | ES\|QL |
+| ------------------ | ------ |
+| `event_count`      | Yes    |
+| `value_count`      | Yes    |
+| `temporal`         | Yes    |
+| `temporal_ordered` | No, droid warns and skips the rule |
+
+Only the correlation is deployed: the rules it references are part of its query, and a rule of the file it does not reference is not deployed either.
+
+#### Pipelines for correlations
+
+A log source group can convert its correlation rules with other pipelines through `pipelines_correlation`, see [Correlation rule overrides](../configuration.md#correlation-rule-overrides). The whole file is then converted with these pipelines, including the rules the correlation references, so the list must still hold the field mappings and conditions of these rules. A typical use is pointing the aggregation at a narrower index:
+
+```toml
+[platforms.elastic.pipelines.vault_signin_attempts]
+pipelines = ["pipelines/elastic_vault.yml"]
+pipelines_correlation = [
+    "pipelines/elastic_vault.yml",
+    "pipelines/elastic_vault_correlation.yml", # (1)!
+]
+product = "vault"
+service = "signin_attempts"
+```
+
+1.  A higher priority pipeline that sets the `index` state to the sign-in data stream alone.
+
+#### Look-back
+
+Kibana only hands a rule the events between `from` and the time it runs. A correlation looks back over its `timespan` on top of the schedule interval and the `additional_look_back`: a 1 hour correlation scheduled every 5 minutes runs with `from: now-3900s`.
+
+#### Alert suppression
+
+Each run within the look-back sees the same group again, and Kibana would raise a new alert for it every time. Droid turns on [alert suppression](https://www.elastic.co/docs/solutions/security/detect-and-alert/suppress-detection-alerts) on correlation rules, grouped by `timebucket` and the `group-by` fields of the correlation, for the duration of the look-back: the runs that follow add to the first alert instead of raising new ones.
+
+???+ warning
+
+    - Alert suppression needs a Platinum license or higher. On a lower license, set `suppress_correlation_alerts = false`, and expect one alert per run for as long as a group stays within the look-back.
+    - Kibana suppresses on three fields at most: a correlation grouped by more than two fields is deployed without suppression, with a warning.
+
+#### Time buckets
+
+The correlation counts events per fixed `timespan` bucket (`date_trunc`), not over a sliding window. With a 10 minutes timespan, five failures between 09:08 and 09:12 fall in two buckets, 09:00 and 09:10, and do not match a `gte: 5` condition.
+
 ### Main config
 
 | Parameter              | Mandatory | Default Value | Description                                                                                                 |
@@ -146,6 +228,7 @@ Elastic has no informational severity, the risk score keeps those rules apart fr
 | schedule_interval      | No        | "1"           | Interval at which the alert rule should run                                                                 |
 | schedule_interval_unit | No        | "h"           | Interval unit second (s), minute (m), hour (h) or day (d)                                                   |
 | additional_look_back   | No        | None          | Extra time each run looks back, e.g. "1m", so events ingested late are not missed between two runs          |
+| suppress_correlation_alerts | No   | true          | Suppress the repeated alerts of correlation rules, needs a Platinum license, see [Alert suppression](#alert-suppression) |
 | license                | No        | "DRL"         | The license of your rule                                                                                    |
 | legacy_esql            | No        | false         | This flag is only if you are on an Elastic Version that needs the square brackets around the metadata info. |
 | building_block_prefix  | No        | "BB"          | Optional prefix for Building Block Rules to distinguish from Alert rules                                    |
