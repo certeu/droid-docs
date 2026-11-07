@@ -10,6 +10,27 @@
 
     It is necessary to specify the indexes within the Sigma pipeline or it will be defaulted to `logs-*`.
 
+#### Data streams
+
+Most logs live in data streams, named `<type>-<dataset>-<namespace>`. Point the pipeline at the data stream, never at its backing indices: a document showing `"_index": ".ds-logs-vault-planet.express-2026.10.29-000034"` belongs to the data stream `logs-vault-planet.express`. Elasticsearch prefixes the backing indices with `.ds-`, suffixes them with a date and a generation, and rolls them over.
+
+| `val`                         | Matches                                                          |
+| ----------------------------- | ---------------------------------------------------------------- |
+| `logs-vault-planet.express`   | that data stream only                                            |
+| `logs-*-planet.express`       | every dataset of the `planet.express` namespace                  |
+| `logs-vault-*`                | the `vault` dataset in every namespace                           |
+| `*-vault-planet.express-*`    | nothing: the name ends with the namespace, there is no `-` after |
+
+Wildcards skip the hidden `.ds-` backing indices unless the pattern itself starts with a `.`.
+
+When several sources share one dataset, e.g. a generic `fallback` one, the index cannot tell them apart: add a condition on a field that does, with an `add_condition` transformation in the same pipeline.
+
+Before deploying, check what a pattern resolves to:
+
+```
+GET _resolve/index/logs-*-planet.express
+```
+
 === "Single index"
 
     ```yaml
