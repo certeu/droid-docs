@@ -410,6 +410,10 @@ POST kbn:/api/actions/connector/planet-express-smtp
 
 See the [email connector](https://www.elastic.co/docs/reference/kibana/connectors-kibana/email-action-type) for the other services (Exchange, Outlook, ...).
 
+???+ note
+
+    Kibana escapes the Markdown characters of the variables in the message. The HTML part of the email reads as expected, while a text-only mail client shows the escapes, e.g. `PIZZA \- Vault Brute Force`.
+
 #### Webhook
 
 Posts the alerts as JSON, e.g. to a SOAR. `body` replaces the default:
