@@ -123,6 +123,25 @@ PUT _security/role/droid
     - The Kibana feature names carry a version, `securitySolutionRulesV4` on Kibana 9.5. `GET kbn:/api/features` lists the ones of your Kibana, or pick *Rules and Exceptions* in *Stack Management > Roles*.
     - For an API key, create it as an administrator with the role above in its `role_descriptors`. A user creating its own API keys needs the `manage_own_api_key` cluster privilege on top.
 
+### Kibana spaces
+
+Droid exports to the default space, or to the [space](https://www.elastic.co/docs/deploy-manage/manage-spaces) of your choice, e.g. one per team:
+
+```toml
+[platforms.elastic]
+kibana_url = "https://kibana.planet-express.local"
+space = "planet-express" # (1)!
+```
+
+1.  The ID of the space, as in its URLs `/s/planet-express/app/...`, not its name.
+
+Export, integrity and removal then only see the rules of that space: a rule of the same ID in another space is another rule. Searches run on Elasticsearch, which has no spaces.
+
+???+ warning
+
+    - The connectors of the [rule actions](#rule-actions) must exist in that space. Connector IDs are unique across all the spaces of Kibana while a connector is only usable in its own, so give each space's connectors IDs of their own, e.g. `planet-express-alerts-index`.
+    - Grant the [privileges](#permissions) in that space: `"resources": ["space:planet-express"]`.
+
 ### Supported Platforms
 
 For Sigma rules both `esql` (ES|QL) and `eql` (EQL) are supported. ES|QL supports every correlation type EQL does and more, see [Correlation rules](#correlation-rules), and there are no known benefits to using EQL over ES|QL.
@@ -312,6 +331,38 @@ A suppression configured for a [correlation](#correlation-rules) replaces the on
 
 A rule run raises at most `max_signals` alerts, 100 by default. Kibana drops the others and flags the run with a warning. Raise it for the platform with `max_signals`, or for one rule with the custom field `elastic_max_signals`. Kibana caps it with [`xpack.alerting.rules.run.alerts.max`](https://www.elastic.co/docs/reference/kibana/configuration-reference/alerting-settings), 1000 by default.
 
+### Schedule
+
+A rule runs every `interval` and looks back over that interval, plus the `additional_look_back`, plus the `timespan` of a [correlation](#look-back). A rare, expensive rule can run hourly while a critical one runs every minute, each taking the first value found among:
+
+| Level          | Interval                     | Additional look-back                       |
+| -------------- | ---------------------------- | ------------------------------------------ |
+| Rule           | custom field `elastic_interval` | custom field `elastic_additional_look_back` |
+| Pipeline group | `interval`                   | `additional_look_back`                     |
+| Platform       | `schedule_interval` and `schedule_interval_unit` | `additional_look_back` |
+
+Durations are written like `90s`, `5m`, `1h` or `1d`.
+
+=== "Rule"
+
+    ```yaml
+    custom:
+        elastic_interval: 1h
+        elastic_additional_look_back: 5m # (1)!
+    ```
+
+    1.  Every run covers the last 65 minutes.
+
+=== "Pipeline group"
+
+    ```toml
+    [platforms.elastic.pipelines.windows_driver_load]
+    pipelines = ["pipelines/elastic_windows.yml"]
+    product = "windows"
+    category = "driver_load"
+    interval = "15m"
+    ```
+
 ### Export and integrity
 
 Export creates the rules missing from Kibana and updates the ones that differ from what droid would deploy, leaving the others untouched: running it again over unchanged rules changes nothing. A rule whose language changed, from ES|QL to EQL or back, is deleted and created again. The custom fields `disabled`, `building_block` and `removed` disable the rule, make it a building block, or delete it; deleting a rule already gone is not an error.
@@ -331,12 +382,13 @@ A rule changed on Kibana since its export, or changed in the repository and not 
 | Parameter              | Mandatory | Default Value | Description                                                                                                 |
 | ---------------------- | --------- | ------------- | ----------------------------------------------------------------------------------------------------------- |
 | kibana_url             | Yes       | N/A           | The Base URL to your Kibana, since the Security API used goes via Kibana not Elasticsearch                  |
+| space                  | No        | None          | ID of the Kibana space of the rules, the default space otherwise, see [Kibana spaces](#kibana-spaces)      |
 | auth_method            | No        | "basic"       | `basic` or `api_key`, see [Authentication](#authentication)                                                 |
 | elastic_hosts          | No        | []            | Elasticsearch hosts, only used when Searching                                                               |
 | kibana_ca              | No        | False         | Certificate Chain used on the Kibana host                                                                   |
 | elastic_ca             | No        | None          | Certificate Chain used on the Elastic host, can also be the same as Kibana, only used when Searching        |
 | elastic_tls_verify     | No        | False         | Used to turn on and off Certificate Validation for Elastic Connections, only used when Searching            |
-| schedule_interval      | No        | "1"           | Interval at which the alert rule should run                                                                 |
+| schedule_interval      | No        | "1"           | Interval at which the rules run, unless a rule or its pipeline group sets its own, see [Schedule](#schedule) |
 | schedule_interval_unit | No        | "h"           | Interval unit second (s), minute (m), hour (h) or day (d)                                                   |
 | additional_look_back   | No        | None          | Extra time each run looks back, e.g. "1m", so events ingested late are not missed between two runs          |
 | suppress_correlation_alerts | No   | true          | Suppress the repeated alerts of correlation rules, needs a Platinum license, see [Suppression of repeated alerts](#suppression-of-repeated-alerts) |
@@ -348,6 +400,8 @@ A rule changed on Kibana since its export, or changed in the repository and not 
 | alert_prefix           | No        | None          | Optional prefix to your imported rules to distinguish them                                                  |
 | esql_search_range_gte  | No        | "now-1h"      | How far back an ES\|QL search looks, unless the rule sets its own search look-back                          |
 | eql_search_range_gte   | No        | "now-24h"     | How far back an EQL search looks, unless the rule sets its own search look-back                             |
+| esql_search_range_lte  | No        | now           | Where an ES\|QL search stops, e.g. "now-5m" to leave out the events still being ingested                    |
+| eql_search_range_lte   | No        | now           | Where an EQL search stops                                                                                   |
 
 
 ```toml
@@ -419,6 +473,23 @@ custom:
 ```
 
 1.  This rule only sends the email. `elastic_actions: []` runs no action at all.
+
+A rule can also change the parameters of its actions, e.g. to reach another team, by mapping each action to the parameters it overrides. The others come from the configuration:
+
+```yaml
+custom:
+    elastic_actions:
+        dispatch_email: # (1)!
+            to:
+                - zoidberg@planet-express.local
+            subject: "Claws out: {{context.rule.name}}"
+        alerts_index: # (2)!
+```
+
+1.  Sent to Zoidberg, still with Hermes in `cc` as configured.
+2.  Selected without any change.
+
+Any [parameter](#common-parameters) of the action can be overridden, but its `type` and `connector_id`: another connector is another action.
 
 #### Common parameters
 
@@ -590,7 +661,9 @@ The Custom Fields available with the Elastic Integration are:
 | removed        | true/false      | Set to true if you want to delete the rule                                         |
 | building_block | true/false      | Set to true if your rule should be a building block                                |
 | index          | list of strings | Set one or more indexes to be used. Use a list (-) if you want more than one index |
-| elastic_actions | list of strings | Names of the [rule actions](#rule-actions) the rule runs, instead of all of them. `[]` for none |
+| elastic_actions | list or mapping | Names of the [rule actions](#rule-actions) the rule runs, instead of all of them, or a mapping of them to the parameters the rule overrides. `[]` for none |
+| elastic_interval | duration       | How often the rule runs, e.g. `1h`, see [Schedule](#schedule)                       |
+| elastic_additional_look_back | duration | Extra time each run of the rule looks back, see [Schedule](#schedule)    |
 | elastic_suppression | table/false | The [alert suppression](#alert-suppression) of the rule, `false` for none          |
 | elastic_max_signals | integer     | Maximum number of alerts a run of the rule raises, see [Alerts per run](#alerts-per-run) |
 
