@@ -293,7 +293,20 @@ It replaces `impactedAssets`, removed by Microsoft. It has the shape of the Micr
 | securityGroups       | distinguishedNameColumn, objectIdColumn, sidColumn                                          |
 | urls                 | addressColumn                                                                               |
 
-Each entry becomes one entity: map the columns identifying the same account, host or file in the same entry.
+Each entry becomes one entity: map the columns identifying the same account, host or file in the same entry. A rule returning two accounts, the initiating one and the target one for instance, has two `accounts` entries.
+
+The mappings to start from depend on the table the rule queries:
+
+| The rule queries | Map |
+| --- | --- |
+| `DeviceProcessEvents`, `DeviceFileEvents` and the other `Device*` tables | `hosts`: `deviceIdColumn` DeviceId, `nameColumn` DeviceName. `accounts`: `sidColumn` InitiatingProcessAccountSid, `upnColumn` InitiatingProcessAccountUpn. `files`: `sha256Column` SHA256, `nameColumn` FileName |
+| `DeviceNetworkEvents` | The above, and `ips`: `addressColumn` RemoteIP. `urls`: `addressColumn` RemoteUrl |
+| `IdentityLogonEvents`, `AADSignInEventsBeta` | `accounts`: `upnColumn` AccountUpn, `sidColumn` AccountSid. `ips`: `addressColumn` IPAddress |
+| `EmailEvents` | `mailboxes`: `primaryAddressColumn` RecipientEmailAddress. `mailMessages`: `networkMessageIdColumn` NetworkMessageId, `senderColumn` SenderFromAddress |
+
+???+ warning
+
+    The identity and email tables have no `DeviceId`: the default device mapping does not fit the rules querying them, which must set their own `xdr_entity_mappings`.
 
 ```yaml
 custom:
