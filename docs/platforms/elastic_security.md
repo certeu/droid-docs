@@ -474,6 +474,8 @@ custom:
 
 1.  This rule only sends the email. `elastic_actions: []` runs no action at all.
 
+#### Overrides per rule
+
 A rule can also change the parameters of its actions, e.g. to reach another team, by mapping each action to the parameters it overrides. The others come from the configuration:
 
 ```yaml
@@ -489,7 +491,42 @@ custom:
 1.  Sent to Zoidberg, still with Hermes in `cc` as configured.
 2.  Selected without any change.
 
-Any [parameter](#common-parameters) of the action can be overridden, but its `type` and `connector_id`: another connector is another action.
+Rule files are usually open to more people than the configuration, and an action sends what the rule found. A rule therefore only overrides what its action lets it, listed in `overridable`: nothing by default. An email action can also bind the recipients rules give it to some domains:
+
+```toml
+[platforms.elastic.actions.dispatch_email]
+type = "email"
+connector_id = "planet-express-smtp"
+to = ["leela@planet-express.local"]
+cc = ["hermes@planet-express.local"]
+overridable = ["to", "subject"] # (1)!
+allowed_recipient_domains = ["planet-express.local"] # (2)!
+```
+
+1.  Any parameter of the action, `per_alert`, `throttle` and `connector_id` can be listed, never its `type`.
+2.  Only binds the recipients a rule gives: `to = ["mom@momcorp.example"]` in a rule fails its export, while the configuration stays free to send outside.
+
+A rule overriding anything else fails its export, naming the parameter, and nothing of it is deployed.
+
+???+ info "Webhook per rule"
+
+    Splunk sets the webhook URL of a rule. On Kibana, the URL belongs to the connector, along with its credentials: create a webhook connector per target, and let the rules pick theirs.
+
+    ```toml
+    [platforms.elastic.actions.dispatch_webhook]
+    type = "webhook"
+    connector_id = "planet-express-dispatch"
+    overridable = ["connector_id"]
+    ```
+
+    ```yaml
+    custom:
+        elastic_actions:
+            dispatch_webhook:
+                connector_id: momcorp-dispatch
+    ```
+
+    Kibana refuses a connector of another type, a rule cannot turn its webhook into an email.
 
 #### Common parameters
 
@@ -499,6 +536,8 @@ Any [parameter](#common-parameters) of the action can be overridden, but its `ty
 | connector_id | Yes       | N/A                 | ID of the Kibana connector the action runs                                                        |
 | per_alert    | No        | Depends on the type | `true` runs the action for each alert, `false` once per rule run with a summary of its alerts      |
 | throttle     | No        | None                | Summary only: run at most once per period, e.g. `"1h"`, instead of on each rule run with alerts   |
+| overridable  | No        | []                  | Parameters a rule may [override](#overrides-per-rule)                                             |
+| allowed_recipient_domains | No | None              | Email only: domains the recipients a rule gives must belong to                                    |
 
 Any other parameter is rejected, a typo fails before anything is exported.
 
