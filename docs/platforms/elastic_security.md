@@ -88,9 +88,44 @@ The same credentials are used for Kibana (export and integrity) and for Elastics
 auth_method = "api_key"
 ```
 
+### Permissions
+
+Give droid a user, or an API key, of its own with the least privileges. Kibana runs a detection rule with the API key of whoever saved it last: the rules droid exports read the source indices with droid's privileges, not with the ones of an analyst.
+
+| Privilege                                   | Kind          | Needed by                                                          |
+| ------------------------------------------- | ------------- | ------------------------------------------------------------------ |
+| `read` on the indices the rules read        | Elasticsearch | search, and every run of the exported rules                        |
+| Security > *Rules and Exceptions*: **All**  | Kibana        | export (create, update, remove) and integrity                      |
+| Management > *Actions and Connectors*: **Read** | Kibana    | export, only when [rule actions](#rule-actions) are configured     |
+
+No cluster privilege is needed, nor any privilege on the alerts index: Kibana writes the alerts itself. As a role, in the space the rules go to:
+
+```
+PUT _security/role/droid
+{
+  "cluster": [],
+  "indices": [
+    {"names": ["logs-*"], "privileges": ["read"]}
+  ],
+  "applications": [
+    {
+      "application": "kibana-.kibana",
+      "privileges": ["feature_securitySolutionRulesV4.all", "feature_actions.read"],
+      "resources": ["space:default"]
+    }
+  ]
+}
+```
+
+???+ note
+
+    - List in `indices` every index pattern of your pipelines. A rule reading an index droid cannot read runs, but finds nothing.
+    - The Kibana feature names carry a version, `securitySolutionRulesV4` on Kibana 9.5. `GET kbn:/api/features` lists the ones of your Kibana, or pick *Rules and Exceptions* in *Stack Management > Roles*.
+    - For an API key, create it as an administrator with the role above in its `role_descriptors`. A user creating its own API keys needs the `manage_own_api_key` cluster privilege on top.
+
 ### Supported Platforms
 
-For Sigma rules both `esql` (ES|QL) and `eql` (EQL) are supported. However since only esql supports correlations rules, it is advised to use esql only. There are no known benefits to using EQL over ES|QL.
+For Sigma rules both `esql` (ES|QL) and `eql` (EQL) are supported. ES|QL supports every correlation type EQL does and more, see [Correlation rules](#correlation-rules), and there are no known benefits to using EQL over ES|QL.
 
 For raw rules, both esql (ES|QL) and eql (EQL) are supported. Always use the `raw_language` custom field to specify the language used in the Sigma yaml file.
 
@@ -139,7 +174,7 @@ Elastic has no informational severity, the risk score keeps those rules apart fr
 
 ### Correlation rules
 
-[Correlation rules](https://sigmahq.io/docs/meta/correlations.html) are supported with ES|QL only. Write the correlation and the rules it references in one file:
+[Correlation rules](https://sigmahq.io/docs/meta/correlations.html) are supported with ES|QL, and partly with EQL. Write the correlation and the rules it references in one file:
 
 ```yaml
 title: Vault Sign-In Failure
@@ -176,12 +211,16 @@ FROM logs-signin-attempts-planet-express-default METADATA _id, _index, _version
 | WHERE event_count >= 5
 ```
 
-| Correlation type   | ES\|QL |
-| ------------------ | ------ |
-| `event_count`      | Yes    |
-| `value_count`      | Yes    |
-| `temporal`         | Yes    |
-| `temporal_ordered` | No, droid warns and skips the rule |
+| Correlation type   | ES\|QL | EQL |
+| ------------------ | ------ | --- |
+| `event_count`      | Yes    | With a `gte` condition only, as a `sequence ... with runs=N` |
+| `value_count`      | Yes    | No |
+| `temporal`         | Yes    | Yes, as a `sample` |
+| `temporal_ordered` | No     | No |
+
+Droid warns and skips a correlation the language cannot express. On EQL, the backend would render `value_count` as a sequence of events sharing the counted value, the opposite of distinct values, any `event_count` condition as "at least", and `temporal_ordered` as a query Elasticsearch cannot parse.
+
+An EQL `sequence` counts the events within its `maxspan`, a sliding window, where ES|QL counts them per [time bucket](#time-buckets). Kibana deduplicates the alerts of EQL correlations itself, the [suppression of repeated alerts](#suppression-of-repeated-alerts) is only needed by ES|QL. An EQL `sample` has no time window: the [look-back](#look-back) of the rule bounds it.
 
 Only the correlation is deployed: the rules it references are part of its query, and a rule of the file it does not reference is not deployed either.
 
