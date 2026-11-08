@@ -12,7 +12,7 @@
     - Every ATT&CK tactic tag of a rule is pushed, each with the techniques belonging to it, where only the last tactic was kept before. See [MITRE ATT&CK](#mitre-attck).
     - The device groups of `blockFile` and the isolation type of `isolateDevice` are now actually pushed.
     - The first export after the upgrade may update every rule once, to the new properties.
-    - New rules get the Sigma rule id as their id on the platform. Rules already deployed keep theirs.
+    - New rules get `droid-<Sigma rule id>` as their id on the platform, Microsoft requiring an id starting with a letter. Rules already deployed keep theirs.
     - A rule Microsoft auto-disabled after repeated failures is left disabled with a warning, and reported by the integrity check.
     - The integrity check compares every setting export deploys (schedule, severity, title, tactics, actions, entity mappings), where it only compared the query, the description and the enabled state. Rules changed on the portal by hand, which passed before, are now reported.
 
