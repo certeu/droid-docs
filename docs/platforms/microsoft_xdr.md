@@ -138,6 +138,8 @@ Both Sigma and raw rules are supported under the platform name `microsoft_xdr`.
 | tenant_id | No        | None         | Tenant ID when using "default" |
 |credential_file|No|None|A YAML file with your credentials if you do not want to use the environment variables|
 |auth_cert|No|None|A certificate file (PEM) when using the certificate-based authentication|
+|rule_parameters.query_period_groups|No|None|The `query_period` of the rules of a log source, see [schedule](#schedule)|
+|rule_parameters.entity_mappings_groups|No|None|The entity mappings of the rules of a log source, see [entity mappings per log source](#entity-mappings-per-log-source)|
 
 ```toml
 [platforms]
@@ -177,7 +179,7 @@ customer_filters_directory = "filters/zoidberg/"
 | actions        | list       | The actions that should be performed on rule trigger, see action section for more information |
 | query_period   | 0/1h/3h/12h/24h | How often this rule runs, overriding the configuration, see [schedule](#schedule) |
 | xdr_entity_mappings | list  | Maps the query columns to the entities of the alerts, see the [entity mappings](#entity-mappings) section |
-| impactedAssets | list       | **Removed by Microsoft**, ignored with a warning: use `xdr_entity_mappings` |
+| impactedAssets | list       | **Removed by Microsoft**, ignored with a warning: use `xdr_entity_mappings` or [mappings per log source](#entity-mappings-per-log-source) |
 
 ### Schedule
 
@@ -260,9 +262,17 @@ ATT&CK v18 split Defense Evasion into Stealth and Defense Impairment, while Micr
 
 ### Entity mappings
 
-The custom field `xdr_entity_mappings` maps the columns the query returns to the entities attached to the alerts, which determine how alerts are grouped into incidents. Without it, droid maps the device: `hosts` with `deviceIdColumn: DeviceId`, so the query must return `DeviceId`. A rule querying a table without it, identity or email events for instance, must set its own mappings.
+Entity mappings map the columns the query returns to the entities attached to the alerts, which determine how alerts are grouped into incidents and what an analyst can pivot on. They replace `impactedAssets`, removed by Microsoft.
 
-It replaces `impactedAssets`, removed by Microsoft. It has the shape of the Microsoft Sentinel `entity_mappings`, but the Microsoft XDR vocabulary, which is why it has its own name: a rule can carry both.
+The entities of a rule come from, in order:
+
+1. the custom field `xdr_entity_mappings` of the rule
+2. the [entity mappings of its log source](#entity-mappings-per-log-source), in the configuration
+3. neither: the rule is created with its device mapped, `hosts` with `deviceIdColumn: DeviceId`, so its query must return `DeviceId`. After that, droid leaves its entities as they are on the platform and does not compare them.
+
+Droid deploys and enforces the mappings of the first two like any other setting: export updates them, and the integrity check reports a rule whose entities differ. A rule of the third kind keeps whatever entities it has, including the ones Microsoft added when it converted the `impactedAssets` of the rules deployed before: often more than the device alone, files and processes on `SHA256` for instance.
+
+`xdr_entity_mappings` has the shape of the Microsoft Sentinel `entity_mappings`, but the Microsoft XDR vocabulary, which is why it has its own name: a rule can carry both.
 
 | Entity type          | Identifiers                                                                                 |
 | -------------------- | ------------------------------------------------------------------------------------------- |
@@ -321,11 +331,40 @@ An unknown entity type or identifier, or an entry without field mappings, fails 
 - a column the query does not return: `Entity mappings reference the following column(s) which are not projected by the query output`
 - an entity without enough columns to identify it. An account needs `aadUserIdColumn`, `sidColumn` or `upnColumn`, or `nameColumn` with `ntDomainColumn`, `dnsDomainColumn` or `upnSuffixColumn`: a name alone is refused.
 
-Deleting the field from a rule brings the default device mapping back on the next export.
+Deleting the field from a rule gives it the mappings of its log source on the next export. Without any for its log source, the mappings deployed stay as they are: change them on the portal, or map the log source.
 
 ???+ note
 
     The columns must be returned by the query. With Sigma rules using `| project`, or with raw rules, check that the mapped columns are part of the output.
+
+#### Entity mappings per log source
+
+Which entities a rule returns depends on the table it queries, rather than on the rule: every rule on process creation events returns a device, an account and a file. `entity_mappings_groups` maps them once for a log source, and every rule of that log source takes them, unless it sets its own `xdr_entity_mappings`. A group matches the rules whose `logsource` has exactly its `product`, `category` and `service`, as `query_period_groups` does.
+
+```toml
+[platforms.microsoft_xdr.rule_parameters.entity_mappings_groups.windows_process_creation]
+product = "windows"
+category = "process_creation"
+
+[[platforms.microsoft_xdr.rule_parameters.entity_mappings_groups.windows_process_creation.entity_mappings]]
+entity_type = "hosts"
+field_mappings = [
+    { identifier = "deviceIdColumn", column_name = "DeviceId" },
+    { identifier = "nameColumn", column_name = "DeviceName" },
+]
+
+[[platforms.microsoft_xdr.rule_parameters.entity_mappings_groups.windows_process_creation.entity_mappings]]
+entity_type = "files"
+field_mappings = [
+    { identifier = "sha256Column", column_name = "SHA256" },
+]
+```
+
+The mappings are the same as in `xdr_entity_mappings`, and must be returned by the query of every rule of the log source: check the pipelines of the log source project them. A group without mappings, or with an invalid one, fails when droid starts.
+
+???+ tip
+
+    Mapping every log source puts the entities of every rule in code, reviewed and checked by the integrity check, rather than left to Microsoft.
 
 ???+ note "Migrating from impactedAssets"
 
@@ -338,7 +377,7 @@ Deleting the field from a rule brings the default device mapping back on the nex
     | `User` / `accountUpn`                             | `accounts` / `upnColumn`: `AccountUpn`            |
     | `User` / `accountObjectId`                        | `accounts` / `aadUserIdColumn`: `AccountObjectId` |
 
-    As `impactedAssets` did, droid maps the device of a rule without entity mappings. Setting `xdr_entity_mappings` replaces that default: include `hosts` in it to keep the device.
+    As `impactedAssets` did, droid maps the device of a new rule without entity mappings. Mappings of the rule or of its log source replace that default: include `hosts` in them to keep the device.
 
 ### Disabled rules
 
