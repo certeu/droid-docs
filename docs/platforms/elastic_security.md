@@ -504,7 +504,7 @@ allowed_recipient_domains = ["planet-express.local"] # (2)!
 ```
 
 1.  Any parameter of the action, `per_alert`, `throttle` and `connector_id` can be listed, never its `type`.
-2.  Only binds the recipients a rule gives: `to = ["mom@momcorp.example"]` in a rule fails its export, while the configuration stays free to send outside.
+2.  Only binds the recipients a rule gives: `to = ["mom@momcorp.example"]` in a rule fails its export, while the configuration stays free to send outside. Each recipient a rule gives must be a single plain address: an entry hiding several, such as `"mom@momcorp.example, leela@planet-express.local"`, is refused.
 
 A rule overriding anything else fails its export, naming the parameter, and nothing of it is deployed.
 
