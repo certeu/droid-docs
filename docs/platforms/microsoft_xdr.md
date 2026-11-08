@@ -15,6 +15,7 @@
     - The first export after the upgrade may update every rule once, to the new properties.
     - New rules get the Sigma rule id as their id on the platform. Rules already deployed keep theirs.
     - A rule Microsoft auto-disabled after repeated failures is left disabled with a warning, and reported by the integrity check.
+    - The integrity check compares every setting export deploys (schedule, severity, title, tactics, actions, entity mappings), where it only compared the query, the description and the enabled state. Rules changed on the portal by hand, which passed before, are now reported.
 
 - [x] Search feature
 - [x] Export feature
@@ -185,14 +186,14 @@ An identifier is required for all actions, except the device actions, which alwa
 
 A file action can take both a SHA-1 and a SHA-256 identifier as a list, for instance `identifier: [sha1, sha256]`. `stopAndQuarantineFile` also needs `DeviceId`, the device the file is stopped on, and `isolateDevice` requires an isolation type.
 
-Removing an action from a rule removes it from the platform on the next export.
+Removing an action from a rule removes it from the platform on the next export. The email actions (soft or hard delete, move to Inbox, Junk or Deleted Items) have no custom field: droid leaves the ones set on the portal alone, and does not report them in the integrity check.
 
 | Action                      | Identifier                                                   | Isolation Type  | Device Group          |
 | --------------------------- | ------------------------------------------------------------ | --------------- | --------------------- |
-| forceUserPasswordReset      | accountSid, initiatingProcessAccountSid                      |                 |                       |
-| disableUser                 | accountSid, initiatingProcessAccountSid                      |                 |                       |
-| markUserAsCompromised       | accountObjectId, initiatingProcessAccountObjectId            |                 |                       |
-| stopAndQuarantineFile       | sha1, initiatingProcessSHA1                                  |                 |                       |
+| forceUserPasswordReset      | accountSid, initiatingProcessAccountSid, requestAccountSid, onPremSid |        |                       |
+| disableUser                 | accountSid, initiatingProcessAccountSid, requestAccountSid, onPremSid |        |                       |
+| markUserAsCompromised       | accountObjectId, initiatingProcessAccountObjectId, servicePrincipalId, recipientObjectId | |              |
+| stopAndQuarantineFile       | sha1, initiatingProcessSHA1 (deviceId is always added)       |                 |                       |
 | restrictAppExecution        |                                                              |                 |                       |
 | initiateInvestigation       |                                                              |                 |                       |
 | runAntivirusScan            |                                                              |                 |                       |
@@ -284,6 +285,8 @@ custom:
 ```
 
 An unknown entity type or identifier, or an entry without field mappings, fails the export of the rule.
+
+Without `xdr_entity_mappings`, droid leaves the entities to Microsoft and does not compare them. Deleting the field from a rule therefore does not remove mappings already deployed: remove them on the portal.
 
 ???+ note
 
