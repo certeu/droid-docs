@@ -2,7 +2,11 @@
 - [x] Export feature
     * [x] Remove detection rules
     * [x] Disable detection rules
-- [ ] Detection rule actions
+- [x] Detection rule actions
+    * [x] Index
+    * [x] Server log
+    * [x] Email
+    * [x] Webhook
 
 ### Index detection
 
@@ -266,6 +270,202 @@ category = "process_creation"
 ...
 ```
 
+### Rule actions
+
+Rule actions notify, or keep track, when a rule raises alerts. Each action runs a Kibana [connector](https://www.elastic.co/docs/reference/kibana/connectors-kibana): droid attaches the actions to the rules it exports, the connectors themselves are created in Kibana beforehand, since they hold the secrets (SMTP password, webhook credentials).
+
+| Type         | Connector     | Minimum license | Default frequency |
+| ------------ | ------------- | --------------- | ----------------- |
+| `index`      | `.index`      | Basic           | For each alert    |
+| `server_log` | `.server-log` | Basic           | Summary per run   |
+| `email`      | `.email`      | Gold            | Summary per run   |
+| `webhook`    | `.webhook`    | Gold            | Summary per run   |
+
+Declare each action under `[platforms.elastic.actions.<name>]`. Every action runs for every rule, unless a rule selects its own with the [custom field](#sigma-custom-fields) `elastic_actions`.
+
+```toml
+[platforms.elastic.actions.alerts_index]
+type = "index"
+connector_id = "droid-alerts-index" # (1)!
+
+[platforms.elastic.actions.dispatch_email]
+type = "email"
+connector_id = "planet-express-smtp"
+to = ["leela@planet-express.local"]
+cc = ["hermes@planet-express.local"]
+throttle = "1h" # (2)!
+
+[platforms.elastic.actions.dispatch_webhook]
+type = "webhook"
+connector_id = "planet-express-dispatch"
+```
+
+1.  The ID of the connector in Kibana, as shown in *Stack Management > Connectors* or returned when the connector is created.
+2.  At most one summary per hour, however often the rule runs.
+
+```yaml
+custom:
+    elastic_actions:
+        - dispatch_email # (1)!
+```
+
+1.  This rule only sends the email. `elastic_actions: []` runs no action at all.
+
+#### Common parameters
+
+| Parameter    | Mandatory | Default             | Description                                                                                       |
+| ------------ | --------- | ------------------- | ------------------------------------------------------------------------------------------------- |
+| type         | Yes       | N/A                 | `index`, `server_log`, `email` or `webhook`                                                       |
+| connector_id | Yes       | N/A                 | ID of the Kibana connector the action runs                                                        |
+| per_alert    | No        | Depends on the type | `true` runs the action for each alert, `false` once per rule run with a summary of its alerts      |
+| throttle     | No        | None                | Summary only: run at most once per period, e.g. `"1h"`, instead of on each rule run with alerts   |
+
+Any other parameter is rejected, a typo fails before anything is exported.
+
+#### Index
+
+Keeps the alerts in an index of your own, e.g. to archive them longer than the alerts index or to feed another tool. By default each alert is indexed whole, under `alert`, with the rule, the reason and the source event:
+
+```json
+{
+  "@timestamp": "2026-11-07T18:06:45.917Z",
+  "alert": {
+    "kibana": {"alert": {"rule": {"name": "Vault Brute Force", "...": "..."}, "reason": "...", "severity": "medium"}},
+    "1vault": {"signinattempts": {"target_user": {"email": "kif@planet-express.local"}}}
+  }
+}
+```
+
+With `per_alert = false`, a single document per run holds `rule_id`, `rule_name`, `severity`, `risk_score`, `alerts_count` and `results_link`. Replace the document with `document`, a table whose values can use the [action variables](#action-variables):
+
+```toml
+[platforms.elastic.actions.alerts_index]
+type = "index"
+connector_id = "droid-alerts-index"
+document = { rule = "{{context.rule.name}}", alert_id = "{{alert.id}}" }
+```
+
+Create the index and its connector before exporting. Alerts hold hundreds of fields, the `flattened` type keeps them searchable without hitting the [field limit](https://www.elastic.co/docs/manage-data/data-store/mapping/mapping-limit-settings) of the index:
+
+```
+PUT planet-express-alerts
+{
+  "mappings": {
+    "properties": {
+      "@timestamp": {"type": "date"},
+      "alert": {"type": "flattened"}
+    }
+  }
+}
+
+POST kbn:/api/actions/connector/droid-alerts-index
+{
+  "name": "Alerts archive",
+  "connector_type_id": ".index",
+  "config": {"index": "planet-express-alerts", "refresh": false, "executionTimeField": "@timestamp"}
+}
+```
+
+???+ warning
+
+    A `document` given as a string is not JSON escaped by Kibana: a rule name holding a quote turns it into invalid JSON, and the action fails in the Kibana logs only. Prefer a table, whose values are escaped.
+
+#### Server log
+
+Writes a line in the Kibana log, handy to check that actions run. `level` is one of `trace`, `debug`, `info` (default), `warn`, `error` or `fatal`, and `message` replaces the default line.
+
+```toml
+[platforms.elastic.actions.kitchen_log]
+type = "server_log"
+connector_id = "droid-server-log"
+level = "warn"
+```
+
+```
+POST kbn:/api/actions/connector/droid-server-log
+{"name": "Server log", "connector_type_id": ".server-log"}
+```
+
+#### Email
+
+Sends the alerts by email. At least one of `to`, `cc` or `bcc` is required. `subject` and `message` (Markdown) replace the defaults, which give the rule, its severity and risk score, the number of alerts and a link to them.
+
+```toml
+[platforms.elastic.actions.dispatch_email]
+type = "email"
+connector_id = "planet-express-smtp"
+to = ["leela@planet-express.local"]
+subject = "[{{context.rule.severity}}] {{context.rule.name}}"
+```
+
+```
+POST kbn:/api/actions/connector/planet-express-smtp
+{
+  "name": "Planet Express SMTP",
+  "connector_type_id": ".email",
+  "config": {"service": "other", "host": "smtp.planet-express.local", "port": 587, "secure": false, "from": "droid@planet-express.local"},
+  "secrets": {"user": "droid", "password": "..."}
+}
+```
+
+See the [email connector](https://www.elastic.co/docs/reference/kibana/connectors-kibana/email-action-type) for the other services (Exchange, Outlook, ...).
+
+#### Webhook
+
+Posts the alerts as JSON, e.g. to a SOAR. `body` replaces the default:
+
+=== "Summary (default)"
+
+    ```json
+    {"rule_id": "…", "rule_name": "…", "severity": "…", "risk_score": 47, "results_link": "…", "alerts_count": 2, "alerts": [{…}, {…}]}
+    ```
+
+=== "per_alert = true"
+
+    ```json
+    {"rule_id": "…", "rule_name": "…", "severity": "…", "risk_score": 47, "results_link": "…", "alert": {…}}
+    ```
+
+```toml
+[platforms.elastic.actions.dispatch_webhook]
+type = "webhook"
+connector_id = "planet-express-dispatch"
+per_alert = true
+```
+
+```
+POST kbn:/api/actions/connector/planet-express-dispatch
+{
+  "name": "Planet Express dispatch",
+  "connector_type_id": ".webhook",
+  "config": {"url": "https://soar.planet-express.local/hooks/droid", "method": "post", "hasAuth": true, "authType": "webhook-authentication-basic"},
+  "secrets": {"user": "droid", "password": "..."}
+}
+```
+
+In the body, `{{ }}` values are JSON escaped by Kibana and `{{{ }}}` are inserted raw, which is how the alerts go in as JSON objects.
+
+#### Action variables
+
+Templates use the [Security rule action variables](https://www.elastic.co/docs/solutions/security/detect-and-alert/common-rule-settings#rule-notifications), among them:
+
+| Variable                         | Value                                                         |
+| -------------------------------- | ------------------------------------------------------------- |
+| `{{context.rule.name}}`          | Name of the rule, with its `alert_prefix`                     |
+| `{{context.rule.rule_id}}`       | ID of the Sigma rule                                          |
+| `{{context.rule.severity}}`      | Severity of the rule                                          |
+| `{{context.rule.risk_score}}`    | Risk score of the rule                                        |
+| `{{context.rule.description}}`   | Description of the rule                                       |
+| `{{state.signals_count}}`        | Number of alerts of the run                                   |
+| `{{context.alerts}}`             | The alerts, as JSON: the one alert of a per alert action      |
+| `{{alert.id}}`                   | ID of the alert, per alert actions only                       |
+| `{{context.results_link}}`       | Link to the alerts in Kibana                                  |
+| `{{date}}`                       | Time of the run                                               |
+
+???+ note
+
+    `context.results_link` stays empty until [`server.publicBaseUrl`](https://www.elastic.co/docs/reference/kibana/configuration-reference/general-settings#server-publicbaseurl) is set in the Kibana configuration.
+
 ### Sigma Custom Fields
 
 The Custom Fields available with the Elastic Integration are:
@@ -277,5 +477,6 @@ The Custom Fields available with the Elastic Integration are:
 | removed        | true/false      | Set to true if you want to delete the rule                                         |
 | building_block | true/false      | Set to true if your rule should be a building block                                |
 | index          | list of strings | Set one or more indexes to be used. Use a list (-) if you want more than one index |
+| elastic_actions | list of strings | Names of the [rule actions](#rule-actions) the rule runs, instead of all of them. `[]` for none |
 
 
