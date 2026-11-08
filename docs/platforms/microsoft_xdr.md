@@ -254,7 +254,7 @@ custom:
 
 ### MITRE ATT&CK
 
-droid pushes the `attack.<tactic>` and `attack.t<id>` tags of a rule as the tactics of its alerts, sub-techniques grouped under their technique. Microsoft refuses a technique under a tactic it does not belong to, so each technique goes under the tagged tactics it belongs to in MITRE ATT&CK, or under its own tactics when the rule tags none of them. The ATT&CK data comes from pySigma, which downloads it on first use, as for Elastic.
+droid pushes the `attack.<tactic>` and `attack.t<id>` tags of a rule as the tactics of its alerts, sub-techniques grouped under their technique. A rule without any tactic tag is deployed without tactics, with a warning, and the tactics already deployed on it are left as they are: removing every ATT&CK tag from a rule does not remove its tactics from the platform. Microsoft refuses a technique under a tactic it does not belong to, so each technique goes under the tagged tactics it belongs to in MITRE ATT&CK, or under its own tactics when the rule tags none of them. The ATT&CK data comes from pySigma, which downloads it on first use, as for Elastic.
 
 ATT&CK v18 split Defense Evasion into Stealth and Defense Impairment, while Microsoft and Sigma still use Defense Evasion: droid pushes those techniques under Defense Evasion. Should Microsoft still refuse a technique, its ATT&CK being older than droid's, droid deploys the rule without it and warns.
 
@@ -316,7 +316,10 @@ custom:
           column_name: InitiatingProcessAccountUpn
 ```
 
-An unknown entity type or identifier, or an entry without field mappings, fails the export of the rule.
+An unknown entity type or identifier, or an entry without field mappings, fails the export of the rule. So does a mapping Microsoft refuses, with its reason:
+
+- a column the query does not return: `Entity mappings reference the following column(s) which are not projected by the query output`
+- an entity without enough columns to identify it. An account needs `aadUserIdColumn`, `sidColumn` or `upnColumn`, or `nameColumn` with `ntDomainColumn`, `dnsDomainColumn` or `upnSuffixColumn`: a name alone is refused.
 
 Deleting the field from a rule brings the default device mapping back on the next export.
 
