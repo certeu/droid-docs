@@ -176,7 +176,6 @@ customer_filters_directory = "filters/zoidberg/"
 | removed        | true/false | Set to true if you want to delete the rule                                                    |
 | actions        | list       | The actions that should be performed on rule trigger, see action section for more information |
 | query_period   | 0/1h/3h/12h/24h | How often this rule runs, overriding the configuration, see [schedule](#schedule) |
-| xdr_lookback   | ISO 8601 duration | How far back each run of this rule searches, see [schedule](#schedule) |
 | xdr_entity_mappings | list  | Maps the query columns to the entities of the alerts, see the [entity mappings](#entity-mappings) section |
 | impactedAssets | list       | **Removed by Microsoft**, ignored with a warning: use `xdr_entity_mappings` |
 
@@ -192,15 +191,7 @@ A deployed rule runs on its own on Microsoft XDR, at the frequency set by `query
 | 12h          | Every 12 hours                |
 | 24h          | Every day                     |
 
-Each run searches a window of time back from now, its lookback. Microsoft sets it from the frequency, longer than the frequency so that late events are not missed. A rule needing a longer one, for an attack spreading over days for instance, sets `custom.xdr_lookback` to an [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations): `PT6H` for 6 hours, `P2D` for 2 days.
-
-```yaml
-custom:
-  query_period: 1h
-  xdr_lookback: PT6H
-```
-
-droid only sends and compares the lookback of a rule setting it. Removing `xdr_lookback` from a rule leaves the lookback deployed on the platform as it is: change it there, or set it to the value wanted.
+Each run searches a window of time back from now, its lookback, which Microsoft sets from the frequency. droid does not set it: Microsoft Graph accepts a lookback, but does not return it, so droid could not check the one deployed.
 
 ???+ note
 
