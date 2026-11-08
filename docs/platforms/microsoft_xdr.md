@@ -132,7 +132,7 @@ Both Sigma and raw rules are supported under the platform name `microsoft_xdr`.
 | ------------ | --------- | ------------- | -------------- |
 | search_auth  | Yes       | N/A           | Authentication method: "app" or "default" |
 | export_auth  | Yes       | N/A           | Authentication method: "app" or "default" |
-| days_ago     | No        | 1             | The lookback period time when using the search feature expressed in days (from 1 to 30) |
+| days_ago     | No        | 1             | The lookback period time when using the search feature expressed in days (from 1 to 30). Not to be confused with the lookback of the deployed rules, see [schedule](#schedule) |
 | query_period | Yes       | N/A           | How often the rule runs: 1h, 3h, 12h, 24h, or 0 for continuous (near real-time), which only works on quick queries. A rule overrides it with `custom.query_period`, and a group of rules with `query_period_groups` |
 | alert_prefix | No        | None          | Prefix for the exported rule name  |
 | tenant_id | No        | None         | Tenant ID when using "default" |
@@ -175,9 +175,36 @@ customer_filters_directory = "filters/zoidberg/"
 | disabled       | true/false | Set to true if you want to disable the rule                                                   |
 | removed        | true/false | Set to true if you want to delete the rule                                                    |
 | actions        | list       | The actions that should be performed on rule trigger, see action section for more information |
-| query_period   | 0/1h/3h/12h/24h | How often this rule runs, overriding the configuration |
+| query_period   | 0/1h/3h/12h/24h | How often this rule runs, overriding the configuration, see [schedule](#schedule) |
+| xdr_lookback   | ISO 8601 duration | How far back each run of this rule searches, see [schedule](#schedule) |
 | xdr_entity_mappings | list  | Maps the query columns to the entities of the alerts, see the [entity mappings](#entity-mappings) section |
 | impactedAssets | list       | **Removed by Microsoft**, ignored with a warning: use `xdr_entity_mappings` |
+
+### Schedule
+
+A deployed rule runs on its own on Microsoft XDR, at the frequency set by `query_period`, in the configuration, a `query_period_groups` entry or the rule's `custom.query_period`, the rule winning over its group and the group over the configuration:
+
+| query_period | Runs                          |
+| ------------ | ----------------------------- |
+| 0            | Continuously (near real-time) |
+| 1h           | Every hour                    |
+| 3h           | Every 3 hours                 |
+| 12h          | Every 12 hours                |
+| 24h          | Every day                     |
+
+Each run searches a window of time back from now, its lookback. Microsoft sets it from the frequency, longer than the frequency so that late events are not missed. A rule needing a longer one, for an attack spreading over days for instance, sets `custom.xdr_lookback` to an [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations): `PT6H` for 6 hours, `P2D` for 2 days.
+
+```yaml
+custom:
+  query_period: 1h
+  xdr_lookback: PT6H
+```
+
+droid only sends and compares the lookback of a rule setting it. Removing `xdr_lookback` from a rule leaves the lookback deployed on the platform as it is: change it there, or set it to the value wanted.
+
+???+ note
+
+    `custom.query_period` is also read by Microsoft Sentinel, as a number of hours of lookback. A rule deployed on both platforms cannot hold a value valid for both: on Microsoft XDR, any value but those above fails the export of the rule.
 
 ### Action
 
