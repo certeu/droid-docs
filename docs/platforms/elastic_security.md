@@ -312,6 +312,20 @@ A suppression configured for a [correlation](#correlation-rules) replaces the on
 
 A rule run raises at most `max_signals` alerts, 100 by default. Kibana drops the others and flags the run with a warning. Raise it for the platform with `max_signals`, or for one rule with the custom field `elastic_max_signals`. Kibana caps it with [`xpack.alerting.rules.run.alerts.max`](https://www.elastic.co/docs/reference/kibana/configuration-reference/alerting-settings), 1000 by default.
 
+### Export and integrity
+
+Export creates the rules missing from Kibana and updates the ones that differ from what droid would deploy, leaving the others untouched: running it again over unchanged rules changes nothing. A rule whose language changed, from ES|QL to EQL or back, is deleted and created again. The custom fields `disabled`, `building_block` and `removed` disable the rule, make it a building block, or delete it; deleting a rule already gone is not an error.
+
+Integrity checks that each rule on Kibana is the one export would deploy, field by field, and names every field that differs:
+
+- the query, and the index of EQL rules
+- the name, description, severity, risk score, MITRE ATT&CK mapping and tags
+- the schedule and look-back, `interval` and `from`
+- the actions, alert suppression and `max_signals`
+- whether the rule is enabled, and whether it is a building block
+
+A rule changed on Kibana since its export, or changed in the repository and not exported yet, fails the check. So does a rule marked `removed` still on Kibana, or a rule Kibana cannot show droid.
+
 ### Main config
 
 | Parameter              | Mandatory | Default Value | Description                                                                                                 |
