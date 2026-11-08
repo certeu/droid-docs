@@ -9,7 +9,7 @@
 
     Behaviour changes, without anything to do:
 
-    - Every ATT&CK tactic tag of a rule is pushed with its techniques, where only the last tactic was kept before. See [MITRE ATT&CK](#mitre-attck).
+    - Every ATT&CK tactic tag of a rule is pushed, each with the techniques belonging to it, where only the last tactic was kept before. See [MITRE ATT&CK](#mitre-attck).
     - The device groups of `blockFile` and the isolation type of `isolateDevice` are now actually pushed.
     - The first export after the upgrade may update every rule once, to the new properties.
     - New rules get the Sigma rule id as their id on the platform. Rules already deployed keep theirs.
@@ -236,7 +236,9 @@ custom:
 
 ### MITRE ATT&CK
 
-droid pushes the `attack.<tactic>` and `attack.t<id>` tags of a rule as the tactics of its alerts. Sigma does not say which technique belongs to which tactic, so every tactic carries every technique of the rule, sub-techniques grouped under their technique. A rule tagging techniques without any tactic gets a warning, and its techniques are not pushed.
+droid pushes the `attack.<tactic>` and `attack.t<id>` tags of a rule as the tactics of its alerts, sub-techniques grouped under their technique. Microsoft refuses a technique under a tactic it does not belong to, so each technique goes under the tagged tactics it belongs to in MITRE ATT&CK, or under its own tactics when the rule tags none of them. The ATT&CK data comes from pySigma, which downloads it on first use, as for Elastic.
+
+ATT&CK v18 split Defense Evasion into Stealth and Defense Impairment, while Microsoft and Sigma still use Defense Evasion: droid pushes those techniques under Defense Evasion. Should Microsoft still refuse a technique, its ATT&CK being older than droid's, droid deploys the rule without it and warns.
 
 ### Entity mappings
 
