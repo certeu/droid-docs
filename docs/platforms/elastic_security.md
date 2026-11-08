@@ -206,18 +206,72 @@ service = "signin_attempts"
 
 Kibana only hands a rule the events between `from` and the time it runs. A correlation looks back over its `timespan` on top of the schedule interval and the `additional_look_back`: a 1 hour correlation scheduled every 5 minutes runs with `from: now-3900s`.
 
-#### Alert suppression
+#### Suppression of repeated alerts
 
-Each run within the look-back sees the same group again, and Kibana would raise a new alert for it every time. Droid turns on [alert suppression](https://www.elastic.co/docs/solutions/security/detect-and-alert/suppress-detection-alerts) on correlation rules, grouped by `timebucket` and the `group-by` fields of the correlation, for the duration of the look-back: the runs that follow add to the first alert instead of raising new ones.
+Each run within the look-back sees the same group again, and Kibana would raise a new alert for it every time. Unless an [alert suppression](#alert-suppression) is configured for the rule, droid suppresses the alerts of a correlation on `timebucket` and its `group-by` fields, for the duration of the look-back: the runs that follow add to the first alert instead of raising new ones.
 
 ???+ warning
 
     - Alert suppression needs a Platinum license or higher. On a lower license, set `suppress_correlation_alerts = false`, and expect one alert per run for as long as a group stays within the look-back.
-    - Kibana suppresses on three fields at most: a correlation grouped by more than two fields is deployed without suppression, with a warning.
+    - Kibana suppresses on three fields at most: a correlation grouped by more than two fields is deployed without suppression, with a warning, until you pick its fields with an [alert suppression](#alert-suppression).
 
 #### Time buckets
 
 The correlation counts events per fixed `timespan` bucket (`date_trunc`), not over a sliding window. With a 10 minutes timespan, five failures between 09:08 and 09:12 fall in two buckets, 09:00 and 09:10, and do not match a `gte: 5` condition.
+
+### Alert suppression
+
+A noisy rule raises one alert per matching event. [Alert suppression](https://www.elastic.co/docs/solutions/security/detect-and-alert/suppress-detection-alerts) raises one alert per group of field values instead, e.g. one per account and per hour: the events that follow are counted on that alert, in `kibana.alert.suppression.docs_count`, and run no [action](#rule-actions). It is the counterpart of `alert.suppress.fields` and `alert.suppress.period` on [Splunk](./splunk.md).
+
+???+ warning
+
+    Alert suppression needs a Platinum license or higher.
+
+| Parameter      | Mandatory | Default    | Description                                                                                                  |
+| -------------- | --------- | ---------- | ------------------------------------------------------------------------------------------------------------ |
+| group_by       | Yes       | N/A        | 1 to 3 fields, as named in Elasticsearch once the pipelines mapped them                                      |
+| duration       | No        | None       | Suppress for this period, e.g. `90s`, `30m` or `4h`. Without it, alerts are only grouped within each rule run |
+| missing_fields | No        | `suppress` | `suppress` groups the events missing a `group_by` field together, `do_not_suppress` alerts on each of them   |
+
+A rule takes the first suppression found among:
+
+1. its custom field `elastic_suppression`, `false` turning suppression off for the rule
+2. the `suppression` of its [pipeline group](../configuration.md), each [variant](../log_source_variants.md) having its own
+3. the `[platforms.elastic.suppression]` of the platform
+
+=== "Rule"
+
+    ```yaml
+    custom:
+        elastic_suppression:
+            group_by:
+                - 1vault.signinattempts.target_user.email
+            duration: 1h
+    ```
+
+=== "Pipeline group"
+
+    ```toml
+    [platforms.elastic.pipelines.vault_signin_attempts]
+    pipelines = ["pipelines/elastic_vault.yml"]
+    product = "vault"
+    service = "signin_attempts"
+    suppression = { group_by = ["1vault.signinattempts.target_user.email"], duration = "1h" }
+    ```
+
+=== "Platform"
+
+    ```toml
+    [platforms.elastic.suppression]
+    group_by = ["host.name"]
+    duration = "4h"
+    ```
+
+A suppression configured for a [correlation](#correlation-rules) replaces the one droid sets on its own. Its fields can only be among the ones the correlation returns, `timebucket` and its `group-by` fields, droid warns about any other. Without `duration`, the correlation is suppressed over its look-back.
+
+### Alerts per run
+
+A rule run raises at most `max_signals` alerts, 100 by default. Kibana drops the others and flags the run with a warning. Raise it for the platform with `max_signals`, or for one rule with the custom field `elastic_max_signals`. Kibana caps it with [`xpack.alerting.rules.run.alerts.max`](https://www.elastic.co/docs/reference/kibana/configuration-reference/alerting-settings), 1000 by default.
 
 ### Main config
 
@@ -232,7 +286,9 @@ The correlation counts events per fixed `timespan` bucket (`date_trunc`), not ov
 | schedule_interval      | No        | "1"           | Interval at which the alert rule should run                                                                 |
 | schedule_interval_unit | No        | "h"           | Interval unit second (s), minute (m), hour (h) or day (d)                                                   |
 | additional_look_back   | No        | None          | Extra time each run looks back, e.g. "1m", so events ingested late are not missed between two runs          |
-| suppress_correlation_alerts | No   | true          | Suppress the repeated alerts of correlation rules, needs a Platinum license, see [Alert suppression](#alert-suppression) |
+| suppress_correlation_alerts | No   | true          | Suppress the repeated alerts of correlation rules, needs a Platinum license, see [Suppression of repeated alerts](#suppression-of-repeated-alerts) |
+| suppression            | No        | None          | Alert suppression of every rule, see [Alert suppression](#alert-suppression)                                |
+| max_signals            | No        | 100           | Maximum number of alerts a rule run raises, see [Alerts per run](#alerts-per-run)                           |
 | license                | No        | "DRL"         | The license of your rule                                                                                    |
 | legacy_esql            | No        | false         | This flag is only if you are on an Elastic Version that needs the square brackets around the metadata info. |
 | building_block_prefix  | No        | "BB"          | Optional prefix for Building Block Rules to distinguish from Alert rules                                    |
@@ -482,5 +538,7 @@ The Custom Fields available with the Elastic Integration are:
 | building_block | true/false      | Set to true if your rule should be a building block                                |
 | index          | list of strings | Set one or more indexes to be used. Use a list (-) if you want more than one index |
 | elastic_actions | list of strings | Names of the [rule actions](#rule-actions) the rule runs, instead of all of them. `[]` for none |
+| elastic_suppression | table/false | The [alert suppression](#alert-suppression) of the rule, `false` for none          |
+| elastic_max_signals | integer     | Maximum number of alerts a run of the rule raises, see [Alerts per run](#alerts-per-run) |
 
 
