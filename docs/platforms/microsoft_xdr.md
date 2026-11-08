@@ -1,3 +1,21 @@
+???+ warning "Upgrading from droid 0.4.0: Graph API changes"
+
+    Microsoft removed several properties of the custom detection rules API on 2026-10-01. droid now manages the rules on Graph **v1.0** with their replacements. Most rules and configurations keep working unchanged, except:
+
+    | Change | What to do |
+    | --- | --- |
+    | `query_period = "0"` (continuous / near real-time) has no documented equivalent anymore | Rules using it fail to export, and droid warns about it when it starts. Set `1h`, `3h`, `12h` or `24h` in the configuration, a `query_period_groups` entry or the rule |
+    | `custom.impactedAssets` is no longer pushed | Move it to [`custom.xdr_entity_mappings`](#entity-mappings). droid warns about every rule still using it |
+    | `isolateDevice` without `isolationType` | The isolation type was silently dropped before, it is now an error: set `full` or `selective` |
+
+    Behaviour changes, without anything to do:
+
+    - Every ATT&CK tactic tag of a rule is pushed with its techniques, where only the last tactic was kept before. See [MITRE ATT&CK](#mitre-attck).
+    - The device groups of `blockFile` and the isolation type of `isolateDevice` are now actually pushed.
+    - The first export after the upgrade may update every rule once, to the new properties.
+    - New rules get the Sigma rule id as their id on the platform. Rules already deployed keep theirs.
+    - A rule Microsoft auto-disabled after repeated failures is left disabled with a warning, and reported by the integrity check.
+
 - [x] Search feature
 - [x] Export feature
     * [x] Remove detection rules
@@ -115,7 +133,7 @@ Both Sigma and raw rules are supported under the platform name `microsoft_xdr`.
 | search_auth  | Yes       | N/A           | Authentication method: "app" or "default" |
 | export_auth  | Yes       | N/A           | Authentication method: "app" or "default" |
 | days_ago     | No        | 1             | The lookback period time when using the search feature expressed in days (from 1 to 30) |
-| query_period | Yes       | N/A           | The period of time the query should run over. Accepted Values are: 1h, 3h, 12h, 24h or 0 for near realtime, however this only works on quick queries, Sigma queries should always be OK, but RAW rules might not work |
+| query_period | Yes       | N/A           | How often the rule runs: 1h, 3h, 12h or 24h. A rule overrides it with `custom.query_period`, and a group of rules with `query_period_groups`. The continuous value `0` is not supported anymore, see the warning at the top of this page |
 | alert_prefix | No        | None          | Prefix for the exported rule name  |
 | tenant_id | No        | None         | Tenant ID when using "default" |
 |credential_file|No|None|A YAML file with your credentials if you do not want to use the environment variables|
@@ -156,12 +174,18 @@ customer_filters_directory = "filters/zoidberg/"
 | -------------- | ---------- | --------------------------------------------------------------------------------------------- |
 | disabled       | true/false | Set to true if you want to disable the rule                                                   |
 | removed        | true/false | Set to true if you want to delete the rule                                                    |
-| action         | list       | The actions that should be performed on rule trigger, see action section for more information |
-| impactedAssets | list       | The impactedAssets are needed for Asset mapping to the alerts. Defaults to Device = deviceId  |
+| actions        | list       | The actions that should be performed on rule trigger, see action section for more information |
+| query_period   | 1h/3h/12h/24h | How often this rule runs, overriding the configuration |
+| xdr_entity_mappings | list  | Maps the query columns to the entities of the alerts, see the [entity mappings](#entity-mappings) section |
+| impactedAssets | list       | **Removed by Microsoft**, ignored with a warning: use `xdr_entity_mappings` |
 
 ### Action
 
-An identifier is required for all actions. However, the script will automatically add the necessary fields to the query for actions with only one selection.
+An identifier is required for all actions, except the device actions, which always act on `DeviceId`. droid pushes each identifier as the advanced hunting column holding it, so the query must return that column: `initiatingProcessSHA1` needs `InitiatingProcessSHA1`, `sha1` needs `SHA1`, `accountSid` needs `AccountSid`, the device actions need `DeviceId`.
+
+A file action can take both a SHA-1 and a SHA-256 identifier as a list, for instance `identifier: [sha1, sha256]`. `stopAndQuarantineFile` also needs `DeviceId`, the device the file is stopped on, and `isolateDevice` requires an isolation type.
+
+Removing an action from a rule removes it from the platform on the next export.
 
 | Action                      | Identifier                                                   | Isolation Type  | Device Group          |
 | --------------------------- | ------------------------------------------------------------ | --------------- | --------------------- |
@@ -210,32 +234,74 @@ custom:
 ```
 
 
-### Impacted Assets
+### MITRE ATT&CK
 
-When deploying raw, the custom field `impactedAssets` is required for the asset mapping in the resulting alerts.
+droid pushes the `attack.<tactic>` and `attack.t<id>` tags of a rule as the tactics of its alerts. Sigma does not say which technique belongs to which tactic, so every tactic carries every technique of the rule, sub-techniques grouped under their technique. A rule tagging techniques without any tactic gets a warning, and its techniques are not pushed.
 
-???+ note
+### Entity mappings
 
-    The default value is currently `deviceId` but it might not always work depending on your KQL. As for the Sigma rules, if you make the use of `| project` for instance, make sure to output `DeviceId`.
+The custom field `xdr_entity_mappings` maps the columns the query returns to the entities attached to the alerts. Without it, Microsoft derives the entities itself.
 
-| Impacted Asset Type | Identifier (Allowed Values)                                                                                                         |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Device              | deviceId, deviceName                                                                                                                |
-| Mailbox             | accountUpn, initiatingProcessAccountUpn                                                                                             |
-| User                | accountObjectId, accountSid, accountUpn, accountName, accountDomain, accountId, requestAccountSid, requestAccountName, requestAccountDomain, recipientObjectId, processAccountObjectId, initiatingAccountSid, initiatingProcessAccountUpn, initiatingAccountName, initiatingAccountDomain, servicePrincipalId, servicePrincipalName, targetAccountUpn |
+It replaces `impactedAssets`, removed by Microsoft. It has the shape of the Microsoft Sentinel `entity_mappings`, but the Microsoft XDR vocabulary, which is why it has its own name: a rule can carry both.
+
+| Entity type          | Identifiers                                                                                 |
+| -------------------- | ------------------------------------------------------------------------------------------- |
+| accounts             | aadUserIdColumn, dnsDomainColumn, nameColumn, ntDomainColumn, sidColumn, upnColumn, upnSuffixColumn |
+| amazonResources      | amazonResourceIdColumn                                                                      |
+| azureResources       | resourceIdColumn                                                                            |
+| cloudApplications    | appIdColumn, nameColumn                                                                     |
+| dns                  | domainNameColumn, hostIpAddressColumn, serverIpColumn                                       |
+| files                | nameColumn, sha1Column, sha256Column                                                        |
+| googleCloudResources | fullResourceNameColumn                                                                      |
+| hosts                | deviceIdColumn, dnsDomainColumn, nameColumn, netBiosNameColumn, ntDomainColumn              |
+| ips                  | addressColumn, scopeColumn                                                                  |
+| mailboxes            | primaryAddressColumn                                                                        |
+| mailClusters         | queryColumn, sourceColumn                                                                   |
+| mailMessages         | networkMessageIdColumn, recipientColumn, senderColumn, subjectColumn                        |
+| oAuthApplications    | oAuthAppIdColumn                                                                            |
+| processes            | sha1Column, sha256Column                                                                    |
+| registryValues       | keyColumn, valueNameColumn                                                                  |
+| securityGroups       | distinguishedNameColumn, objectIdColumn, sidColumn                                          |
+| urls                 | addressColumn                                                                               |
+
+Each entry becomes one entity: map the columns identifying the same account, host or file in the same entry.
 
 ```yaml
 custom:
-    # ...
-    impactedAssets:
-    - impactedAssetType: Device
-        identifier: deviceId #deviceId, deviceName
-    - impactedAssetType: Mailbox
-        identifier: initiatingProcessAccountUpn 
-    - impactedAssetType: User
-        identifier: initiatingProcessAccountUpn
+  xdr_entity_mappings:
+    - entity_type: hosts
+      field_mappings:
+        - identifier: deviceIdColumn
+          column_name: DeviceId
+        - identifier: nameColumn
+          column_name: DeviceName
+    - entity_type: accounts
+      field_mappings:
+        - identifier: sidColumn
+          column_name: InitiatingProcessAccountSid
+        - identifier: upnColumn
+          column_name: InitiatingProcessAccountUpn
 ```
 
-???+ warning
+An unknown entity type or identifier, or an entry without field mappings, fails the export of the rule.
 
-    Failing to provide this field will result in non-working detection rules on the platform. We advise to introduce some validation check in your CI/CD process for the Microsoft XDR raw rules.
+???+ note
+
+    The columns must be returned by the query. With Sigma rules using `| project`, or with raw rules, check that the mapped columns are part of the output.
+
+???+ note "Migrating from impactedAssets"
+
+    | impactedAssets                                    | xdr_entity_mappings                               |
+    | ------------------------------------------------- | ------------------------------------------------- |
+    | `Device` / `deviceId`                             | `hosts` / `deviceIdColumn`: `DeviceId`            |
+    | `Device` / `deviceName`                           | `hosts` / `nameColumn`: `DeviceName`              |
+    | `Mailbox` / `accountUpn`                          | `mailboxes` / `primaryAddressColumn`: `AccountUpn` |
+    | `User` / `accountSid`                             | `accounts` / `sidColumn`: `AccountSid`            |
+    | `User` / `accountUpn`                             | `accounts` / `upnColumn`: `AccountUpn`            |
+    | `User` / `accountObjectId`                        | `accounts` / `aadUserIdColumn`: `AccountObjectId` |
+
+    droid used to add `Device` / `deviceId` to every rule. It does not anymore: map `hosts` yourself if you relied on it.
+
+### Disabled rules
+
+`custom.disabled` sets the status of the rule. Microsoft may also auto-disable a rule that keeps failing: droid leaves it disabled with a warning rather than re-enabling it on every export, and the integrity check reports it, until it is fixed and re-enabled on the platform.
