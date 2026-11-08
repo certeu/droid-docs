@@ -4,7 +4,7 @@
 
     | Change | What to do |
     | --- | --- |
-    | `custom.impactedAssets` is no longer pushed | Move it to [`custom.xdr_entity_mappings`](#entity-mappings). droid warns about every rule still using it |
+    | `custom.impactedAssets` is no longer pushed | Rules already deployed keep the entities Microsoft converted their impactedAssets into. For new rules, and to keep entities in code, move them to [`custom.xdr_entity_mappings`](#entity-mappings), or map their log source with [`entity_mappings_groups`](#entity-mappings-per-log-source). droid warns about every rule still using it |
     | `isolateDevice` without `isolationType` | The isolation type was silently dropped before, it is now an error: set `full` or `selective` |
 
     Behaviour changes, without anything to do:
@@ -14,7 +14,11 @@
     - The first export after the upgrade may update every rule once, to the new properties.
     - New rules get `droid-<Sigma rule id>` as their id on the platform, Microsoft requiring an id starting with a letter. Rules already deployed keep theirs.
     - A rule Microsoft auto-disabled after repeated failures is left disabled with a warning, and reported by the integrity check.
-    - The integrity check compares every setting export deploys (schedule, severity, title, tactics, actions, entity mappings), where it only compared the query, the description and the enabled state. Rules changed on the portal by hand, which passed before, are now reported.
+    - The integrity check compares every setting export deploys (schedule, severity, title, tactics, actions, entity mappings), where it only compared the query, the description and the enabled state. Rules changed on the portal by hand, which passed before, are now reported. A rule the check cannot read is now a failure rather than a pass, and in MSSP mode the tenants a [log source variant](../log_source_variants.md) is not deployed to are skipped, as export skips them.
+    - The entities of a rule are only deployed and checked when the rule or its log source maps them. A rule mapping neither is created with its device mapped, and keeps on the platform the entities it has, Microsoft's included. See [entity mappings](#entity-mappings).
+    - A rule without any ATT&CK tactic tag is deployed without tactics, with a warning, and keeps the tactics already deployed on it.
+    - A rule lookup Microsoft refuses, for missing permissions for instance, is an error: a removal used to report such a rule as already removed.
+    - With the `default` authentication, the configured `tenant_id` is now read.
 
 - [x] Search feature
 - [x] Export feature
