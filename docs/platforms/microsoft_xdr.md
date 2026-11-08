@@ -4,7 +4,6 @@
 
     | Change | What to do |
     | --- | --- |
-    | `query_period = "0"` (continuous / near real-time) has no documented equivalent anymore | Rules using it fail to export, and droid warns about it when it starts. Set `1h`, `3h`, `12h` or `24h` in the configuration, a `query_period_groups` entry or the rule |
     | `custom.impactedAssets` is no longer pushed | Move it to [`custom.xdr_entity_mappings`](#entity-mappings). droid warns about every rule still using it |
     | `isolateDevice` without `isolationType` | The isolation type was silently dropped before, it is now an error: set `full` or `selective` |
 
@@ -134,7 +133,7 @@ Both Sigma and raw rules are supported under the platform name `microsoft_xdr`.
 | search_auth  | Yes       | N/A           | Authentication method: "app" or "default" |
 | export_auth  | Yes       | N/A           | Authentication method: "app" or "default" |
 | days_ago     | No        | 1             | The lookback period time when using the search feature expressed in days (from 1 to 30) |
-| query_period | Yes       | N/A           | How often the rule runs: 1h, 3h, 12h or 24h. A rule overrides it with `custom.query_period`, and a group of rules with `query_period_groups`. The continuous value `0` is not supported anymore, see the warning at the top of this page |
+| query_period | Yes       | N/A           | How often the rule runs: 1h, 3h, 12h, 24h, or 0 for continuous (near real-time), which only works on quick queries. A rule overrides it with `custom.query_period`, and a group of rules with `query_period_groups` |
 | alert_prefix | No        | None          | Prefix for the exported rule name  |
 | tenant_id | No        | None         | Tenant ID when using "default" |
 |credential_file|No|None|A YAML file with your credentials if you do not want to use the environment variables|
@@ -176,7 +175,7 @@ customer_filters_directory = "filters/zoidberg/"
 | disabled       | true/false | Set to true if you want to disable the rule                                                   |
 | removed        | true/false | Set to true if you want to delete the rule                                                    |
 | actions        | list       | The actions that should be performed on rule trigger, see action section for more information |
-| query_period   | 1h/3h/12h/24h | How often this rule runs, overriding the configuration |
+| query_period   | 0/1h/3h/12h/24h | How often this rule runs, overriding the configuration |
 | xdr_entity_mappings | list  | Maps the query columns to the entities of the alerts, see the [entity mappings](#entity-mappings) section |
 | impactedAssets | list       | **Removed by Microsoft**, ignored with a warning: use `xdr_entity_mappings` |
 
@@ -241,7 +240,7 @@ droid pushes the `attack.<tactic>` and `attack.t<id>` tags of a rule as the tact
 
 ### Entity mappings
 
-The custom field `xdr_entity_mappings` maps the columns the query returns to the entities attached to the alerts. Without it, Microsoft derives the entities itself.
+The custom field `xdr_entity_mappings` maps the columns the query returns to the entities attached to the alerts, which determine how alerts are grouped into incidents. Without it, droid maps the device: `hosts` with `deviceIdColumn: DeviceId`, so the query must return `DeviceId`. A rule querying a table without it, identity or email events for instance, must set its own mappings.
 
 It replaces `impactedAssets`, removed by Microsoft. It has the shape of the Microsoft Sentinel `entity_mappings`, but the Microsoft XDR vocabulary, which is why it has its own name: a rule can carry both.
 
@@ -286,7 +285,7 @@ custom:
 
 An unknown entity type or identifier, or an entry without field mappings, fails the export of the rule.
 
-Without `xdr_entity_mappings`, droid leaves the entities to Microsoft and does not compare them. Deleting the field from a rule therefore does not remove mappings already deployed: remove them on the portal.
+Deleting the field from a rule brings the default device mapping back on the next export.
 
 ???+ note
 
@@ -303,7 +302,7 @@ Without `xdr_entity_mappings`, droid leaves the entities to Microsoft and does n
     | `User` / `accountUpn`                             | `accounts` / `upnColumn`: `AccountUpn`            |
     | `User` / `accountObjectId`                        | `accounts` / `aadUserIdColumn`: `AccountObjectId` |
 
-    droid used to add `Device` / `deviceId` to every rule. It does not anymore: map `hosts` yourself if you relied on it.
+    As `impactedAssets` did, droid maps the device of a rule without entity mappings. Setting `xdr_entity_mappings` replaces that default: include `hosts` in it to keep the device.
 
 ### Disabled rules
 
