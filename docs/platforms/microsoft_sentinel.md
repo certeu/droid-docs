@@ -169,9 +169,9 @@ An NRT rule has no frequency, lookback or threshold: `query_frequency`, `query_p
 
     Microsoft Sentinel allows 50 NRT rules per workspace. Keep them for the rules where minutes matter, such as a sign-in with a break-glass account.
 
-???+ warning
+???+ note
 
-    Microsoft Sentinel may refuse to change the kind of a rule already deployed. To turn a deployed scheduled rule into an NRT rule, or back, remove it from Microsoft Sentinel before exporting it again. The integrity check (`droid rules integrity`) does not compare the kind of a deployed rule.
+    A rule already deployed can switch between scheduled and NRT: droid deletes the deployed rule and creates it again with its new kind, as Microsoft Sentinel cannot be relied on to change it in place. If the creation fails after the deletion, droid logs that the rule is no longer deployed in that workspace. The integrity check (`droid rules integrity`) reports a rule deployed with the wrong kind.
 
 ### Suppression
 
