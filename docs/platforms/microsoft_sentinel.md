@@ -85,7 +85,7 @@ The required permissions are:
 | threshold_operator | No        | String        | Operator used for alert threshold comparison. Accepted values can be found [here](https://learn.microsoft.com/en-us/rest/api/securityinsights/alert-rules/create-or-update?view=rest-securityinsights-2024-03-01&tabs=HTTP#triggeroperator). |
 | threshold_value    | No        | Integer       | Threshold value for generating alerts.                                      |
 | suppress_status    | No        | Boolean       | Whether to stop running the rule for `suppress_period` after it triggers. See [suppression](#suppression). |
-| suppress_period    | No        | Integer       | How long (in hours) the rule stops running after it triggers. Always sent, as Microsoft Sentinel requires it, even when `suppress_status` is false. |
+| suppress_period    | No        | Integer       | How long (in hours) the rule stops running after it triggers. Required when `suppress_status` is true. Microsoft Sentinel wants a duration even with suppression off: droid then sends this value, or 5 hours when it is not set. |
 | incident_status    | No        | Boolean       | Whether to create incidents for triggered alerts.                           |
 | grouping_status    | No        | Boolean       | Enable or disable grouping of alerts into incidents. Grouping only merges alerts of the same rule. |
 | grouping_period    | No        | Integer       | Time window (in hours) for grouping alerts into incidents.                  |
