@@ -1,0 +1,1904 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="droid enables Detection as Code using Sigma: validate, convert, search and deploy your Sigma rules to your SIEM and EDR.">
+      
+      
+      
+        <link rel="canonical" href="https://certeu.github.io/droid-docs/platforms/microsoft_xdr/">
+      
+      
+        <link rel="prev" href="../microsoft_sentinel/">
+      
+      
+        <link rel="next" href="../../usage/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../_static/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>Microsoft XDR - droid</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#limitations" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="droid" class="md-header__button md-logo" aria-label="droid" data-md-component="logo">
+      
+  <img src="../../_static/favicon.ico" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            droid
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Microsoft XDR
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/certeu/droid" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    certeu/droid
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Platforms
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../usage/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Usage
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="droid" class="md-nav__button md-logo" aria-label="droid" data-md-component="logo">
+      
+  <img src="../../_static/favicon.ico" alt="logo">
+
+    </a>
+    droid
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/certeu/droid" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    certeu/droid
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../log_source_variants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Log source variants
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../custom_fields/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rule custom fields
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../raw_rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Raw rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platforms
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Platforms
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../splunk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Splunk
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../elastic_security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Elastic Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../microsoft_sentinel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Microsoft Sentinel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Microsoft XDR
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Microsoft XDR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permissions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-platforms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported Platforms
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#main-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Main config
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mssp-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MSSP mode
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sigma-custom-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sigma Custom Fields
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schedule
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Action
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mitre-attck" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MITRE ATT&amp;CK
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entity-mappings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entity mappings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Entity mappings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#entity-mappings-per-log-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entity mappings per log source
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disabled-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disabled rules
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permissions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-platforms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported Platforms
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#main-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Main config
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mssp-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MSSP mode
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sigma-custom-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sigma Custom Fields
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schedule
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Action
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mitre-attck" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MITRE ATT&amp;CK
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entity-mappings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entity mappings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Entity mappings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#entity-mappings-per-log-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entity mappings per log source
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disabled-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disabled rules
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>Microsoft XDR</h1>
+
+<details class="warning" open="open">
+<summary>Upgrading from droid 0.4.0: Graph API changes</summary>
+<p>Microsoft removed several properties of the custom detection rules API on 2026-10-01. droid now manages the rules on Graph <strong>v1.0</strong> with their replacements. Most rules and configurations keep working unchanged, except:</p>
+<table>
+<thead>
+<tr>
+<th>Change</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>custom.impactedAssets</code> is no longer pushed</td>
+<td>Rules already deployed keep the entities Microsoft converted their impactedAssets into. For new rules, and to keep entities in code, move them to <a href="#entity-mappings"><code>custom.xdr_entity_mappings</code></a>, or map their log source with <a href="#entity-mappings-per-log-source"><code>entity_mappings_groups</code></a>. droid warns about every rule still using it</td>
+</tr>
+<tr>
+<td><code>isolateDevice</code> without <code>isolationType</code></td>
+<td>The isolation type was silently dropped before, it is now an error: set <code>full</code> or <code>selective</code></td>
+</tr>
+</tbody>
+</table>
+<p>Behaviour changes, without anything to do:</p>
+<ul>
+<li>Every ATT&amp;CK tactic tag of a rule is pushed, each with the techniques belonging to it, where only the last tactic was kept before. See <a href="#mitre-attck">MITRE ATT&amp;CK</a>.</li>
+<li>The device groups of <code>blockFile</code> and the isolation type of <code>isolateDevice</code> are now actually pushed.</li>
+<li>The first export after the upgrade may update every rule once, to the new properties.</li>
+<li>New rules get <code>droid-&lt;Sigma rule id&gt;</code> as their id on the platform, Microsoft requiring an id starting with a letter. Rules already deployed keep theirs.</li>
+<li>A rule Microsoft auto-disabled after repeated failures is left disabled with a warning, and reported by the integrity check.</li>
+<li>The integrity check compares every setting export deploys (schedule, severity, title, tactics, actions, entity mappings), where it only compared the query, the description and the enabled state. Rules changed on the portal by hand, which passed before, are now reported. A rule the check cannot read is now a failure rather than a pass, and in MSSP mode the tenants a <a href="../../log_source_variants/">log source variant</a> is not deployed to are skipped, as export skips them.</li>
+<li>The entities of a rule are only deployed and checked when the rule or its log source maps them. A rule mapping neither is created with its device mapped, and keeps on the platform the entities it has, Microsoft's included. See <a href="#entity-mappings">entity mappings</a>.</li>
+<li>A rule without any ATT&amp;CK tactic tag is deployed without tactics, with a warning, and keeps the tactics already deployed on it.</li>
+<li>A rule lookup Microsoft refuses, for missing permissions for instance, is an error: a removal used to report such a rule as already removed.</li>
+<li>With the <code>default</code> authentication, the configured <code>tenant_id</code> is now read.</li>
+</ul>
+</details>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Search feature</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Export feature<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Remove detection rules</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Disable detection rules</li>
+</ul>
+</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> MSSP feature<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Search in multiple tenants</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Export in multiple tenants</li>
+</ul>
+</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Detection rule actions<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> forceUserPasswordReset</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> disableUser</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> markUserAsCompromised</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> stopAndQuarantineFile</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> restrictAppExecution</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> initiateInvestigation</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> runAntivirusScan</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> collectInvestigationPackage</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> isolateDevice</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> blockFile</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> allowFile</li>
+</ul>
+</li>
+</ul>
+<h3 id="limitations">Limitations</h3>
+<p>Since the PySigma backend <a href="https://github.com/AttackIQ/pySigma-backend-kusto">pySigma-backend-kusto</a> does not yet support correlation rules only standard sigma and raw rules are supported.</p>
+<h3 id="authentication">Authentication</h3>
+<p>Two authentication mode are supported:</p>
+<ul>
+<li><code>default</code>: Default authentication via <code>az login</code></li>
+<li><code>app</code>: Azure Registration App</li>
+</ul>
+<p>When using the default authentication:</p>
+<ol>
+<li>Head to <code>portal.azure.com</code> and authenticate using MFA</li>
+<li>Use <code>az cli</code> to fetch the authentication session</li>
+</ol>
+<p>When using the Azure Registation App, load the following environment variables:</p>
+<ul>
+<li><code>DROID_AZURE_TENANT_ID</code>: Azure tenant ID</li>
+<li><code>DROID_AZURE_CLIENT_ID</code>: Client ID of the registration app</li>
+<li><code>DROID_AZURE_CLIENT_SECRET</code>: Azure client secret</li>
+</ul>
+<p>Alternatively you can add a credential file config to the toml file:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms]</span>
+<span class="k">[platforms.microsoft_xdr]</span>
+<span class="n">credential_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"microsoft365defender-authentication.yml"</span>
+</code></pre></div>
+<p>The file should look like this:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">client_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">123456</span>
+<span class="nt">client_secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">123456</span>
+<span class="nt">tenant_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">123456</span>
+</code></pre></div>
+<p>This will take precedence over the environment variables.</p>
+<p>For certificate-based authentication, you can add the following configuration:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms]</span>
+<span class="k">[platforms.microsoft_xdr]</span>
+<span class="n">auth_cert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"your_cert_file.pem"</span>
+</code></pre></div>
+<p>Replace <code>your_cert_file.pem</code> with the path to your certificate file. This method will use the provided certificate for authentication. The certificate password is only needed if the private key. To provide a password you can use the environment variable <code>DROID_AZURE_CERT_PASS</code> or use <code>cert_pass: "password"</code> in the credential file.</p>
+<details class="note" open="open">
+<summary>Note</summary>
+<p>The PEM file specified in the <code>auth_cert</code> configuration must contain both the private key and the public key, as the public key is used for fingerprinting purposes.</p>
+</details>
+<p>The keys <code>workspace_id</code> and <code>workspace_name</code> are the base workspace declaration but this values can be replaced with the environments <code>DROID_AZURE_WORKSPACE_ID</code> and <code>DROID_AZURE_WORKSPACE_NAME</code>.</p>
+<details class="note" open="open">
+<summary>Note</summary>
+<p>When using the default authentication, set the <code>tenant_id</code> in the configuration</p>
+</details>
+<p><strong>Custom authentication via hook</strong>:</p>
+<p>We have also added the ability retrieve Azure Tokens from any custom app via a hook.</p>
+<p>If the environment variable <code>DROID_AZURE_TOKEN_HOOK</code> is set with a URL, the hook attempts to acquire the token from that URL via a <code>GET</code> request. The response should contain a JSON object with the <code>access_token</code> key, which will be used as the token.</p>
+<p>The hook function  supports dynamic URL configuration using placeholders:</p>
+<ul>
+<li><code>{TENANT_ID}</code>: Replaced with the provided or default tenant ID.</li>
+</ul>
+<p>Additional infos:</p>
+<ul>
+<li>Uses the cached token if it is still valid and the scope matches.</li>
+<li>Supports retries for token retrieval, with retry count and delay.</li>
+<li>If <code>DROID_AZURE_TOKEN_X_API_KEY</code> environment variable is present, it will be included in the request headers.</li>
+</ul>
+<h3 id="permissions">Permissions</h3>
+<p>The required permissions for the app registration are the following:</p>
+<table>
+<thead>
+<tr>
+<th>Microsoft Graph</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CustomDetection.ReadWrite.All</td>
+<td>Application</td>
+<td>Read and write all custom detection rules</td>
+</tr>
+<tr>
+<td>ThreatHunting.Read.All</td>
+<td>Application</td>
+<td>Run hunting queries</td>
+</tr>
+</tbody>
+</table>
+<h3 id="supported-platforms">Supported Platforms</h3>
+<p>Both Sigma and raw rules are supported under the platform name <code>microsoft_xdr</code>.</p>
+<h3 id="main-config">Main config</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Mandatory</th>
+<th>Default Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>search_auth</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>Authentication method: "app" or "default"</td>
+</tr>
+<tr>
+<td>export_auth</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>Authentication method: "app" or "default"</td>
+</tr>
+<tr>
+<td>days_ago</td>
+<td>No</td>
+<td>1</td>
+<td>The lookback period time when using the search feature expressed in days (from 1 to 30). Not to be confused with the lookback of the deployed rules, see <a href="#schedule">schedule</a></td>
+</tr>
+<tr>
+<td>query_period</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>How often the rule runs: 1h, 3h, 12h, 24h, or 0 for continuous (near real-time), which only works on quick queries. A rule overrides it with <code>custom.query_period</code>, and a group of rules with <code>query_period_groups</code></td>
+</tr>
+<tr>
+<td>alert_prefix</td>
+<td>No</td>
+<td>None</td>
+<td>Prefix for the exported rule name</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>No</td>
+<td>None</td>
+<td>Tenant ID when using "default"</td>
+</tr>
+<tr>
+<td>credential_file</td>
+<td>No</td>
+<td>None</td>
+<td>A YAML file with your credentials if you do not want to use the environment variables</td>
+</tr>
+<tr>
+<td>auth_cert</td>
+<td>No</td>
+<td>None</td>
+<td>A certificate file (PEM) when using the certificate-based authentication</td>
+</tr>
+<tr>
+<td>rule_parameters.query_period_groups</td>
+<td>No</td>
+<td>None</td>
+<td>The <code>query_period</code> of the rules of a log source, see <a href="#schedule">schedule</a></td>
+</tr>
+<tr>
+<td>rule_parameters.entity_mappings_groups</td>
+<td>No</td>
+<td>None</td>
+<td>The entity mappings of the rules of a log source, see <a href="#entity-mappings-per-log-source">entity mappings per log source</a></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms]</span>
+<span class="k">[platforms.microsoft_xdr]</span>
+
+<span class="n">search_auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"app"</span>
+<span class="n">export_auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"app"</span>
+<span class="n">query_period</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"1h"</span>
+<span class="n">days_ago</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span>
+<span class="n">alert_prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"SIGMA"</span>
+
+<span class="k">[platforms.microsoft_xdr.pipelines.process_creation]</span>
+<span class="n">pipelines</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"pipelines/xdr_process_creation.yml"</span><span class="p">,</span><span class="w"> </span><span class="s2">"microsoft_xdr"</span><span class="p">]</span>
+<span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"windows"</span>
+<span class="n">category</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"process_creation"</span>
+<span class="p">...</span>
+</code></pre></div>
+<h3 id="mssp-mode">MSSP mode</h3>
+<p>The MSSP mode (<code>--mssp</code>) exports the detection rules to every tenant listed under <code>export_list_mssp</code>. Each entry also accepts a <code>variants</code> key, which selects the telemetry sources that tenant carries when a log source is served by more than one. See <a href="../../log_source_variants/#per-customer-telemetry">log source variants</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms.microsoft_xdr.export_list_mssp.Zoidberg]</span>
+
+<span class="n">tenant_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"122d2a69-c233-4824-a009-a431d839d799"</span>
+<span class="n">customer_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Zoidberg"</span>
+<span class="n">customer_filters_directory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"filters/zoidberg/"</span>
+</code></pre></div>
+<h3 id="sigma-custom-fields">Sigma Custom Fields</h3>
+<table>
+<thead>
+<tr>
+<th>Custom Field</th>
+<th>Values</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>disabled</td>
+<td>true/false</td>
+<td>Set to true if you want to disable the rule</td>
+</tr>
+<tr>
+<td>removed</td>
+<td>true/false</td>
+<td>Set to true if you want to delete the rule</td>
+</tr>
+<tr>
+<td>actions</td>
+<td>list</td>
+<td>The actions that should be performed on rule trigger, see action section for more information</td>
+</tr>
+<tr>
+<td>query_period</td>
+<td>0/1h/3h/12h/24h</td>
+<td>How often this rule runs, overriding the configuration, see <a href="#schedule">schedule</a></td>
+</tr>
+<tr>
+<td>xdr_entity_mappings</td>
+<td>list</td>
+<td>Maps the query columns to the entities of the alerts, see the <a href="#entity-mappings">entity mappings</a> section</td>
+</tr>
+<tr>
+<td>impactedAssets</td>
+<td>list</td>
+<td><strong>Removed by Microsoft</strong>, ignored with a warning: use <code>xdr_entity_mappings</code> or <a href="#entity-mappings-per-log-source">mappings per log source</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="schedule">Schedule</h3>
+<p>A deployed rule runs on its own on Microsoft XDR, at the frequency set by <code>query_period</code>, in the configuration, a <code>query_period_groups</code> entry or the rule's <code>custom.query_period</code>, the rule winning over its group and the group over the configuration:</p>
+<table>
+<thead>
+<tr>
+<th>query_period</th>
+<th>Runs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Continuously (near real-time)</td>
+</tr>
+<tr>
+<td>1h</td>
+<td>Every hour</td>
+</tr>
+<tr>
+<td>3h</td>
+<td>Every 3 hours</td>
+</tr>
+<tr>
+<td>12h</td>
+<td>Every 12 hours</td>
+</tr>
+<tr>
+<td>24h</td>
+<td>Every day</td>
+</tr>
+</tbody>
+</table>
+<p>Each run searches a window of time back from now, its lookback, which Microsoft sets from the frequency. droid does not set it: Microsoft Graph accepts a lookback, but does not return it, so droid could not check the one deployed.</p>
+<details class="note" open="open">
+<summary>Note</summary>
+<p><code>custom.query_period</code> is also read by Microsoft Sentinel, as a number of hours of lookback. <code>0</code> is the only value valid on both platforms: it makes the rule near real-time on both, see <a href="../microsoft_sentinel/#schedule">Microsoft Sentinel</a>. Any other value is a number of hours on Microsoft Sentinel, and fails the export of the rule on Microsoft XDR unless it is one of those above.</p>
+</details>
+<h3 id="action">Action</h3>
+<p>An identifier is required for all actions, except the device actions, which always act on <code>DeviceId</code>. droid pushes each identifier as the advanced hunting column holding it, so the query must return that column: <code>initiatingProcessSHA1</code> needs <code>InitiatingProcessSHA1</code>, <code>sha1</code> needs <code>SHA1</code>, <code>accountSid</code> needs <code>AccountSid</code>, the device actions need <code>DeviceId</code>.</p>
+<p>A file action can take both a SHA-1 and a SHA-256 identifier as a list, for instance <code>identifier: [sha1, sha256]</code>. <code>stopAndQuarantineFile</code> also needs <code>DeviceId</code>, the device the file is stopped on, and <code>isolateDevice</code> requires an isolation type.</p>
+<p>Removing an action from a rule removes it from the platform on the next export. The email actions (soft or hard delete, move to Inbox, Junk or Deleted Items) have no custom field: droid leaves the ones set on the portal alone, and does not report them in the integrity check.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Identifier</th>
+<th>Isolation Type</th>
+<th>Device Group</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>forceUserPasswordReset</td>
+<td>accountSid, initiatingProcessAccountSid, requestAccountSid, onPremSid</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>disableUser</td>
+<td>accountSid, initiatingProcessAccountSid, requestAccountSid, onPremSid</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>markUserAsCompromised</td>
+<td>accountObjectId, initiatingProcessAccountObjectId, servicePrincipalId, recipientObjectId</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>stopAndQuarantineFile</td>
+<td>sha1, initiatingProcessSHA1 (deviceId is always added)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>restrictAppExecution</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>initiateInvestigation</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>runAntivirusScan</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>collectInvestigationPackage</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>isolateDevice</td>
+<td></td>
+<td>selective, full</td>
+<td></td>
+</tr>
+<tr>
+<td>blockFile</td>
+<td>sha256, sha1, initiatingProcessSHA1, initiatingProcessSHA256</td>
+<td></td>
+<td>List of Device Groups</td>
+</tr>
+<tr>
+<td>allowFile</td>
+<td>sha256, sha1, initiatingProcessSHA1, initiatingProcessSHA256</td>
+<td></td>
+<td>List of Device Groups</td>
+</tr>
+</tbody>
+</table>
+<details class="danger" open="open">
+<summary>Danger</summary>
+<p>Never add both "block" and "allow" files simultaneously, as this can cause significant issues.</p>
+</details>
+<div class="highlight"><pre><span></span><code><span class="nt">custom</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">disabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">forceUserPasswordReset</span>
+<span class="w">      </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">accountSid</span><span class="w"> </span><span class="c1">#accountSid, initiatingProcessAccountSid</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disableUser</span>
+<span class="w">      </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">initiatingProcessAccountSid</span><span class="w"> </span><span class="c1">#accountSid, initiatingProcessAccountSid</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">markUserAsCompromised</span>
+<span class="w">      </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">initiatingProcessAccountObjectId</span><span class="w"> </span><span class="c1">#accountObjectId, initiatingProcessAccountObjectId</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stopAndQuarantineFile</span>
+<span class="w">      </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">initiatingProcessSHA1</span><span class="w"> </span><span class="c1"># sha1, initiatingProcessSHA1</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">restrictAppExecution</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">initiateInvestigation</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">runAntivirusScan</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">collectInvestigationPackage</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">isolateDevice</span>
+<span class="w">      </span><span class="nt">isolationType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">selective</span><span class="w"> </span><span class="c1"># full, selective</span>
+
+<span class="w">    </span><span class="c1">## Allow or Block file, never both!</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blockFile</span>
+<span class="w">      </span><span class="nt">deviceGroupNames</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">initiatingProcessSHA256</span><span class="w"> </span><span class="c1"># sha256, sha1, initiatingProcessSHA1, initiatingProcessSHA256</span>
+<span class="w">    </span><span class="c1">#- action: allowFile</span>
+<span class="w">    </span><span class="c1">#  deviceGroupNames:</span>
+<span class="w">    </span><span class="c1">#  identifier: initiatingProcessSHA256 # sha256, sha1, initiatingProcessSHA1, initiatingProcessSHA256</span>
+</code></pre></div>
+<h3 id="mitre-attck">MITRE ATT&amp;CK</h3>
+<p>droid pushes the <code>attack.&lt;tactic&gt;</code> and <code>attack.t&lt;id&gt;</code> tags of a rule as the tactics of its alerts, sub-techniques grouped under their technique. A rule without any tactic tag is deployed without tactics, with a warning, and the tactics already deployed on it are left as they are: removing every ATT&amp;CK tag from a rule does not remove its tactics from the platform. Microsoft refuses a technique under a tactic it does not belong to, so each technique goes under the tagged tactics it belongs to in MITRE ATT&amp;CK, or under its own tactics when the rule tags none of them. The ATT&amp;CK data comes from pySigma, which downloads it on first use, as for Elastic.</p>
+<p>ATT&amp;CK v18 split Defense Evasion into Stealth and Defense Impairment, while Microsoft and Sigma still use Defense Evasion: droid pushes those techniques under Defense Evasion. Should Microsoft still refuse a technique, its ATT&amp;CK being older than droid's, droid deploys the rule without it and warns.</p>
+<h3 id="entity-mappings">Entity mappings</h3>
+<p>Entity mappings map the columns the query returns to the entities attached to the alerts, which determine how alerts are grouped into incidents and what an analyst can pivot on. They replace <code>impactedAssets</code>, removed by Microsoft.</p>
+<p>The entities of a rule come from, in order:</p>
+<ol>
+<li>the custom field <code>xdr_entity_mappings</code> of the rule</li>
+<li>the <a href="#entity-mappings-per-log-source">entity mappings of its log source</a>, in the configuration</li>
+<li>neither: the rule is created with its device mapped, <code>hosts</code> with <code>deviceIdColumn: DeviceId</code>, so its query must return <code>DeviceId</code>. After that, droid leaves its entities as they are on the platform and does not compare them.</li>
+</ol>
+<p>Droid deploys and enforces the mappings of the first two like any other setting: export updates them, and the integrity check reports a rule whose entities differ. A rule of the third kind keeps whatever entities it has, including the ones Microsoft added when it converted the <code>impactedAssets</code> of the rules deployed before: often more than the device alone, files and processes on <code>SHA256</code> for instance.</p>
+<p><code>xdr_entity_mappings</code> has the shape of the Microsoft Sentinel <code>entity_mappings</code>, but the Microsoft XDR vocabulary, which is why it has its own name: a rule can carry both.</p>
+<table>
+<thead>
+<tr>
+<th>Entity type</th>
+<th>Identifiers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>accounts</td>
+<td>aadUserIdColumn, dnsDomainColumn, nameColumn, ntDomainColumn, sidColumn, upnColumn, upnSuffixColumn</td>
+</tr>
+<tr>
+<td>amazonResources</td>
+<td>amazonResourceIdColumn</td>
+</tr>
+<tr>
+<td>azureResources</td>
+<td>resourceIdColumn</td>
+</tr>
+<tr>
+<td>cloudApplications</td>
+<td>appIdColumn, nameColumn</td>
+</tr>
+<tr>
+<td>dns</td>
+<td>domainNameColumn, hostIpAddressColumn, serverIpColumn</td>
+</tr>
+<tr>
+<td>files</td>
+<td>nameColumn, sha1Column, sha256Column</td>
+</tr>
+<tr>
+<td>googleCloudResources</td>
+<td>fullResourceNameColumn</td>
+</tr>
+<tr>
+<td>hosts</td>
+<td>deviceIdColumn, dnsDomainColumn, nameColumn, netBiosNameColumn, ntDomainColumn</td>
+</tr>
+<tr>
+<td>ips</td>
+<td>addressColumn, scopeColumn</td>
+</tr>
+<tr>
+<td>mailboxes</td>
+<td>primaryAddressColumn</td>
+</tr>
+<tr>
+<td>mailClusters</td>
+<td>queryColumn, sourceColumn</td>
+</tr>
+<tr>
+<td>mailMessages</td>
+<td>networkMessageIdColumn, recipientColumn, senderColumn, subjectColumn</td>
+</tr>
+<tr>
+<td>oAuthApplications</td>
+<td>oAuthAppIdColumn</td>
+</tr>
+<tr>
+<td>processes</td>
+<td>sha1Column, sha256Column</td>
+</tr>
+<tr>
+<td>registryValues</td>
+<td>keyColumn, valueNameColumn</td>
+</tr>
+<tr>
+<td>securityGroups</td>
+<td>distinguishedNameColumn, objectIdColumn, sidColumn</td>
+</tr>
+<tr>
+<td>urls</td>
+<td>addressColumn</td>
+</tr>
+</tbody>
+</table>
+<p>Each entry becomes one entity: map the columns identifying the same account, host or file in the same entry. A rule returning two accounts, the initiating one and the target one for instance, has two <code>accounts</code> entries.</p>
+<p>The mappings to start from depend on the table the rule queries:</p>
+<table>
+<thead>
+<tr>
+<th>The rule queries</th>
+<th>Map</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DeviceProcessEvents</code>, <code>DeviceFileEvents</code> and the other <code>Device*</code> tables</td>
+<td><code>hosts</code>: <code>deviceIdColumn</code> DeviceId, <code>nameColumn</code> DeviceName. <code>accounts</code>: <code>sidColumn</code> InitiatingProcessAccountSid, <code>upnColumn</code> InitiatingProcessAccountUpn. <code>files</code>: <code>sha256Column</code> SHA256, <code>nameColumn</code> FileName</td>
+</tr>
+<tr>
+<td><code>DeviceNetworkEvents</code></td>
+<td>The above, and <code>ips</code>: <code>addressColumn</code> RemoteIP. <code>urls</code>: <code>addressColumn</code> RemoteUrl</td>
+</tr>
+<tr>
+<td><code>IdentityLogonEvents</code>, <code>AADSignInEventsBeta</code></td>
+<td><code>accounts</code>: <code>upnColumn</code> AccountUpn, <code>sidColumn</code> AccountSid. <code>ips</code>: <code>addressColumn</code> IPAddress</td>
+</tr>
+<tr>
+<td><code>EmailEvents</code></td>
+<td><code>mailboxes</code>: <code>primaryAddressColumn</code> RecipientEmailAddress. <code>mailMessages</code>: <code>networkMessageIdColumn</code> NetworkMessageId, <code>senderColumn</code> SenderFromAddress</td>
+</tr>
+</tbody>
+</table>
+<details class="warning" open="open">
+<summary>Warning</summary>
+<p>The identity and email tables have no <code>DeviceId</code>: the default device mapping does not fit the rules querying them, which must set their own <code>xdr_entity_mappings</code>.</p>
+</details>
+<div class="highlight"><pre><span></span><code><span class="nt">custom</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">xdr_entity_mappings</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">entity_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hosts</span>
+<span class="w">      </span><span class="nt">field_mappings</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deviceIdColumn</span>
+<span class="w">          </span><span class="nt">column_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DeviceId</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nameColumn</span>
+<span class="w">          </span><span class="nt">column_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DeviceName</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">entity_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">accounts</span>
+<span class="w">      </span><span class="nt">field_mappings</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sidColumn</span>
+<span class="w">          </span><span class="nt">column_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">InitiatingProcessAccountSid</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">upnColumn</span>
+<span class="w">          </span><span class="nt">column_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">InitiatingProcessAccountUpn</span>
+</code></pre></div>
+<p>An unknown entity type or identifier, or an entry without field mappings, fails the export of the rule. So does a mapping Microsoft refuses, with its reason:</p>
+<ul>
+<li>a column the query does not return: <code>Entity mappings reference the following column(s) which are not projected by the query output</code></li>
+<li>an entity without enough columns to identify it. An account needs <code>aadUserIdColumn</code>, <code>sidColumn</code> or <code>upnColumn</code>, or <code>nameColumn</code> with <code>ntDomainColumn</code>, <code>dnsDomainColumn</code> or <code>upnSuffixColumn</code>: a name alone is refused.</li>
+</ul>
+<p>Deleting the field from a rule gives it the mappings of its log source on the next export. Without any for its log source, the mappings deployed stay as they are: change them on the portal, or map the log source.</p>
+<details class="note" open="open">
+<summary>Note</summary>
+<p>The columns must be returned by the query. With Sigma rules using <code>| project</code>, or with raw rules, check that the mapped columns are part of the output.</p>
+</details>
+<h4 id="entity-mappings-per-log-source">Entity mappings per log source</h4>
+<p>Which entities a rule returns depends on the table it queries, rather than on the rule: every rule on process creation events returns a device, an account and a file. <code>entity_mappings_groups</code> maps them once for a log source, and every rule of that log source takes them, unless it sets its own <code>xdr_entity_mappings</code>. A group matches the rules whose <code>logsource</code> has exactly its <code>product</code>, <code>category</code> and <code>service</code>, as <code>query_period_groups</code> does.</p>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms.microsoft_xdr.rule_parameters.entity_mappings_groups.windows_process_creation]</span>
+<span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"windows"</span>
+<span class="n">category</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"process_creation"</span>
+
+<span class="k">[[platforms.microsoft_xdr.rule_parameters.entity_mappings_groups.windows_process_creation.entity_mappings]]</span>
+<span class="n">entity_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"hosts"</span>
+<span class="n">field_mappings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="n">identifier</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"deviceIdColumn"</span><span class="p">,</span><span class="w"> </span><span class="n">column_name</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"DeviceId"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="n">identifier</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"nameColumn"</span><span class="p">,</span><span class="w"> </span><span class="n">column_name</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"DeviceName"</span><span class="w"> </span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="k">[[platforms.microsoft_xdr.rule_parameters.entity_mappings_groups.windows_process_creation.entity_mappings]]</span>
+<span class="n">entity_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"files"</span>
+<span class="n">field_mappings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="n">identifier</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"sha256Column"</span><span class="p">,</span><span class="w"> </span><span class="n">column_name</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"SHA256"</span><span class="w"> </span><span class="p">},</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>The mappings are the same as in <code>xdr_entity_mappings</code>, and must be returned by the query of every rule of the log source: check the pipelines of the log source project them. A group without mappings, or with an invalid one, fails when droid starts.</p>
+<details class="tip" open="open">
+<summary>Tip</summary>
+<p>Mapping every log source puts the entities of every rule in code, reviewed and checked by the integrity check, rather than left to Microsoft.</p>
+</details>
+<details class="note" open="open">
+<summary>Migrating from impactedAssets</summary>
+<table>
+<thead>
+<tr>
+<th>impactedAssets</th>
+<th>xdr_entity_mappings</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Device</code> / <code>deviceId</code></td>
+<td><code>hosts</code> / <code>deviceIdColumn</code>: <code>DeviceId</code></td>
+</tr>
+<tr>
+<td><code>Device</code> / <code>deviceName</code></td>
+<td><code>hosts</code> / <code>nameColumn</code>: <code>DeviceName</code></td>
+</tr>
+<tr>
+<td><code>Mailbox</code> / <code>accountUpn</code></td>
+<td><code>mailboxes</code> / <code>primaryAddressColumn</code>: <code>AccountUpn</code></td>
+</tr>
+<tr>
+<td><code>User</code> / <code>accountSid</code></td>
+<td><code>accounts</code> / <code>sidColumn</code>: <code>AccountSid</code></td>
+</tr>
+<tr>
+<td><code>User</code> / <code>accountUpn</code></td>
+<td><code>accounts</code> / <code>upnColumn</code>: <code>AccountUpn</code></td>
+</tr>
+<tr>
+<td><code>User</code> / <code>accountObjectId</code></td>
+<td><code>accounts</code> / <code>aadUserIdColumn</code>: <code>AccountObjectId</code></td>
+</tr>
+</tbody>
+</table>
+<p>As <code>impactedAssets</code> did, droid maps the device of a new rule without entity mappings. Mappings of the rule or of its log source replace that default: include <code>hosts</code> in them to keep the device.</p>
+</details>
+<h3 id="disabled-rules">Disabled rules</h3>
+<p><code>custom.disabled</code> sets the status of the rule. Microsoft may also auto-disable a rule that keeps failing: droid leaves it disabled with a warning rather than re-enabling it on every export, and the integrity check reports it, until it is fixed and re-enabled on the platform.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.top", "navigation.sections", "navigation.top", "toc.follow", "content.code.copy", "content.code.annotate", "navigation.indexes"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>
