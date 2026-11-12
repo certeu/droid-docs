@@ -444,7 +444,7 @@ Rule actions notify, or keep track, when a rule raises alerts. Each action runs 
 | `email`      | `.email`      | Gold            | Summary per run   |
 | `webhook`    | `.webhook`    | Gold            | Summary per run   |
 
-Declare each action under `[platforms.elastic.actions.<name>]`. Every action runs for every rule, unless a rule selects its own with the [custom field](#sigma-custom-fields) `elastic_actions`.
+Declare each action under `[platforms.elastic.actions.<name>]`. A *global* action, the default, runs on every rule that does not select its own with the [custom field](#sigma-custom-fields) `elastic_actions`; set `global = false` to run it only on the rules that name it, see [Opt-in actions](#opt-in-actions).
 
 ```toml
 [platforms.elastic.actions.alerts_index]
@@ -473,6 +473,30 @@ custom:
 ```
 
 1.  This rule only sends the email. `elastic_actions: []` runs no action at all.
+
+#### Opt-in actions
+
+An action with `global = false` runs only on the rules that name it, not on every rule that selects none. Use it when an action belongs to a few rules, e.g. one email per team, instead of firing for every rule the platform exports:
+
+```toml
+[platforms.elastic.actions.dispatch_email]
+type = "email"
+connector_id = "planet-express-smtp"
+to = ["leela@planet-express.local"]
+global = false # (1)!
+```
+
+1.  Opt-in: it runs on the rules naming it, and a rule selecting nothing does not send it.
+
+```yaml
+custom:
+    elastic_actions:
+        - dispatch_email # (1)!
+```
+
+1.  A rule names the action to run it, and may still [override](#overrides-per-rule) its parameters.
+
+A non-global action is built and checked as usual, its `connector_id` and parameters included: opting in only decides which rules run it, it is not a switch that skips an action left without its parameters.
 
 #### Overrides per rule
 
@@ -538,6 +562,7 @@ A rule overriding anything else fails its export, naming the parameter, and noth
 | throttle     | No        | None                | Summary only: run at most once per period, e.g. `"1h"`, instead of on each rule run with alerts   |
 | overridable  | No        | []                  | Parameters a rule may [override](#overrides-per-rule)                                             |
 | allowed_recipient_domains | No | None              | Email only: domains the recipients a rule gives must belong to                                    |
+| global       | No        | true                | `false` makes the action [opt-in](#opt-in-actions): it runs only on the rules naming it           |
 
 Any other parameter is rejected, a typo fails before anything is exported.
 
@@ -700,7 +725,7 @@ The Custom Fields available with the Elastic Integration are:
 | removed        | true/false      | Set to true if you want to delete the rule                                         |
 | building_block | true/false      | Set to true if your rule should be a building block                                |
 | index          | list of strings | Set one or more indexes to be used. Use a list (-) if you want more than one index |
-| elastic_actions | list or mapping | Names of the [rule actions](#rule-actions) the rule runs, instead of all of them, or a mapping of them to the parameters the rule overrides. `[]` for none |
+| elastic_actions | list or mapping | Names of the [rule actions](#rule-actions) the rule runs, instead of the [global](#opt-in-actions) ones, or a mapping of them to the parameters the rule overrides. `[]` for none |
 | elastic_interval | duration       | How often the rule runs, e.g. `1h`, see [Schedule](#schedule)                       |
 | elastic_additional_look_back | duration | Extra time each run of the rule looks back, see [Schedule](#schedule)    |
 | elastic_suppression | table/false | The [alert suppression](#alert-suppression) of the rule, `false` for none          |
