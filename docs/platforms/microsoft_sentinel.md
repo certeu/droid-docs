@@ -95,6 +95,7 @@ The required permissions are:
 | workspace_name     | Yes       | String        | Name of the base workspace.                                                 |
 | subscription_id    | Yes       | String        | Subscription ID required for setting alerts.                                |
 | resource_group     | Yes       | String        | Resource group name for setting alerts                   |
+| rule_parameters.entity_mappings_groups | No | Dict | The entity mappings of the rules of a log source, see [entity mappings per log source](#entity-mappings-per-log-source) |
 
 ```toml
 
@@ -169,9 +170,9 @@ An NRT rule has no frequency, lookback or threshold: `query_frequency`, `query_p
 
     Microsoft Sentinel allows 50 NRT rules per workspace. Keep them for the rules where minutes matter, such as a sign-in with a break-glass account.
 
-???+ warning
+???+ note
 
-    Microsoft Sentinel may refuse to change the kind of a rule already deployed. To turn a deployed scheduled rule into an NRT rule, or back, remove it from Microsoft Sentinel before exporting it again. The integrity check (`droid rules integrity`) does not compare the kind of a deployed rule.
+    A rule already deployed can switch between scheduled and NRT: droid deletes the deployed rule and creates it again with its new kind, as Microsoft Sentinel cannot be relied on to change it in place. If the creation fails after the deletion, droid logs that the rule is no longer deployed in that workspace. The integrity check (`droid rules integrity`) reports a rule deployed with the wrong kind.
 
 ### Suppression
 
@@ -230,7 +231,7 @@ mssp_search_exclude_list = ["Foo", "Sentinel3"]
 | query_period | integer       | Lookup data from the last X hour, or `0` for a near real-time rule, see [schedule](#schedule) |
 | grouping_period | integer    | Group the alerts created within X hours, overriding `grouping_period` |
 | grouping_matching_entities | list | Group the alerts by these entity types only, for instance `["Account"]`. Sets the grouping method to `Selected` |
-| entity_mappings | dict       | Configure the entity mappings  |
+| entity_mappings | list       | Configure the entity mappings, see [entity mappings](#entity-mappings)  |
 | sentinel_entities | list     | Configure the sentinel entity mappings  |
 
 Use the following example to configure the entity mappings and sentinel entity mappings in a Sigma rule:
@@ -251,3 +252,39 @@ custom:
     - fieldA
     - fieldB
 ```
+
+### Entity mappings
+
+`entity_mappings` maps the columns returned by the query to the entities of the alerts. `entity_type` is one of the [Sentinel entity types](https://learn.microsoft.com/en-us/azure/sentinel/entities-reference) (`Account`, `Host`, `IP`, `URL`, `FileHash`...), and each of its `field_mappings` pairs an `identifier` of that entity with a `column_name` of the query. An unknown entity type, or a field mapping without its `identifier` or `column_name`, fails the export of the rule.
+
+The integrity check (`droid rules integrity`) compares the entity mappings deployed with the ones of the rule, or of its log source, in any order: entities added, removed or changed on the portal are reported. A rule mapping no entities is expected to have none deployed.
+
+#### Entity mappings per log source
+
+Which entities a rule returns depends on the table it queries, rather than on the rule: every rule on process creation events returns a host and an account. `entity_mappings_groups` maps them once for a log source, and every rule of that log source takes them, unless it sets its own `entity_mappings`. A group matches the rules whose `logsource` has exactly its `product`, `category` and `service`, as the pipelines do.
+
+```toml
+[platforms.microsoft_sentinel.rule_parameters.entity_mappings_groups.windows_process_creation]
+product = "windows"
+category = "process_creation"
+
+[[platforms.microsoft_sentinel.rule_parameters.entity_mappings_groups.windows_process_creation.entity_mappings]]
+entity_type = "Host"
+field_mappings = [
+    { identifier = "HostName", column_name = "Computer" },
+]
+
+[[platforms.microsoft_sentinel.rule_parameters.entity_mappings_groups.windows_process_creation.entity_mappings]]
+entity_type = "Account"
+field_mappings = [
+    { identifier = "FullName", column_name = "SubjectUserName" },
+]
+```
+
+The mappings are the same as in the `entity_mappings` of a rule, with the Sentinel entity types rather than the [Microsoft XDR](microsoft_xdr.md#entity-mappings-per-log-source) ones, and must be returned by the query of every rule of the log source: check the pipelines of the log source project them. A group without mappings, or with an invalid one, fails when droid starts. A rule without a log source, such as a raw rule, takes no group.
+
+The groups apply to every workspace of the [MSSP mode](#mssp-mode), and to the Sentinel rules deployed with `--sentinel-xdr`, which read this same `microsoft_sentinel` section.
+
+???+ warning "Upgrading"
+
+    The rules already deployed with other entity mappings than the ones droid now expects, such as the rules of a mapped log source deployed before, are reported by the integrity check until they are exported again.
