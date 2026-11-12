@@ -201,7 +201,7 @@ Each run searches a window of time back from now, its lookback, which Microsoft 
 
 ???+ note
 
-    `custom.query_period` is also read by Microsoft Sentinel, as a number of hours of lookback. A rule deployed on both platforms cannot hold a value valid for both: on Microsoft XDR, any value but those above fails the export of the rule.
+    `custom.query_period` is also read by Microsoft Sentinel, as a number of hours of lookback. `0` is the only value valid on both platforms: it makes the rule near real-time on both, see [Microsoft Sentinel](microsoft_sentinel.md#schedule). Any other value is a number of hours on Microsoft Sentinel, and fails the export of the rule on Microsoft XDR unless it is one of those above.
 
 ### Action
 
