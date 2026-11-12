@@ -167,7 +167,7 @@ An NRT rule has no frequency, lookback or threshold: `query_frequency`, `query_p
 
 ???+ warning
 
-    Microsoft Sentinel allows 50 NRT rules per workspace. Keep them for the rules where minutes matter, such as a sign-in with a break-glass account.
+    Microsoft Sentinel allows 50 NRT rules per workspace. Keep them for the few rules where every minute counts.
 
 ???+ note
 
