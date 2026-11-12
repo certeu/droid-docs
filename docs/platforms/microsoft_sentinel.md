@@ -2,6 +2,7 @@
 - [x] Export feature
     * [x] Remove detection rules
     * [x] Disable detection rules
+    * [x] Near real-time (NRT) detection rules
 - [x] MSSP feature
     * [x] Search and retrieve results from multiple tenants
     * [x] Export in multiple tenants
@@ -40,6 +41,10 @@ The keys `workspace_id`, `workspace_name`, `subscription_id` and `resource_group
 
     The authentication method can be provided using the environment variables `DROID_AZURE_SEARCH_AUTH` and `DROID_AZURE_EXPORT_AUTH`. This will override the parameters `search_auth` and `export_auth` from the TOML configuration.
 
+???+ warning
+
+    On Microsoft Sentinel, `search_auth` is used for both searches and exports: `export_auth` is not read.
+
 **Custom authentication via hook**:
 
 We have also added the ability retrieve Azure Tokens from any custom app via a hook.
@@ -71,18 +76,18 @@ The required permissions are:
 | Parameter          | Mandatory | Type Value | Description                                                                 |
 | ------------------ | --------- | ------------- | --------------------------------------------------------------------------- |
 | search_auth        | Yes       | String        | Authentication method: "app" or "default".                                  |
-| export_auth        | Yes       | String        | Authentication method: "app" or "default".                                  |
-| query_period       | Yes       | Integer       | The period of time the query should run over, in hours.                     |
-| query_frequency    | Yes       | Integer       | How frequently the query should run, in hours.                              |
+| export_auth        | Yes       | String        | Authentication method: "app" or "default". Not read on Microsoft Sentinel, see the note above. |
+| query_period       | Yes       | Integer       | The lookback of a scheduled rule, in hours: how far back each run searches. See [schedule](#schedule). |
+| query_frequency    | Yes       | Integer       | How often a scheduled rule runs, in hours. See [schedule](#schedule).       |
 | days_ago           | Yes       | Integer       | The lookback period of time when searching, in days. |
 | timeout            | Yes       | Integer       | Search timeout in seconds.                   |
 | alert_prefix       | No        | String        | Prefix for the exported alert.                                              |
 | threshold_operator | No        | String        | Operator used for alert threshold comparison. Accepted values can be found [here](https://learn.microsoft.com/en-us/rest/api/securityinsights/alert-rules/create-or-update?view=rest-securityinsights-2024-03-01&tabs=HTTP#triggeroperator). |
 | threshold_value    | No        | Integer       | Threshold value for generating alerts.                                      |
-| suppress_status    | No        | Boolean       | Whether to suppress the alert or not.       |
-| suppress_period    | No        | Integer       | Time period (in hours) to suppress the alert after it triggers.             |
+| suppress_status    | No        | Boolean       | Whether to stop running the rule for `suppress_period` after it triggers. See [suppression](#suppression). |
+| suppress_period    | No        | Integer       | How long (in hours) the rule stops running after it triggers. Always sent, as Microsoft Sentinel requires it, even when `suppress_status` is false. |
 | incident_status    | No        | Boolean       | Whether to create incidents for triggered alerts.                           |
-| grouping_status    | No        | Boolean       | Enable or disable grouping of alerts into incidents.                        |
+| grouping_status    | No        | Boolean       | Enable or disable grouping of alerts into incidents. Grouping only merges alerts of the same rule. |
 | grouping_period    | No        | Integer       | Time window (in hours) for grouping alerts into incidents.                  |
 | grouping_reopen    | No        | Boolean       | Whether to reopen closed incidents if new alerts match the group criteria.  |
 | grouping_method    | No        | String        | Method for grouping alerts. Accepted values can be found [here](https://learn.microsoft.com/en-us/rest/api/securityinsights/alert-rules/create-or-update?view=rest-securityinsights-2024-03-01&tabs=HTTP#matchingmethod)"  |
@@ -103,10 +108,10 @@ timeout = 120
 ## For alerts
 alert_prefix = "[PLANET-EXPRESS]"
 query_frequency = 1
-query_period = 14
+query_period = 2
 threshold_operator = "GreaterThan"
-threshold_value = 1
-suppress_status = true
+threshold_value = 0
+suppress_status = false
 suppress_period = 2
 incident_status = true
 grouping_status = true
@@ -141,6 +146,36 @@ resource_group = "planet_express_resource_group"
     category = "file_event"
 
 ```
+
+### Schedule
+
+A rule is deployed as a scheduled rule, unless it asks to be a near real-time rule.
+
+**Scheduled rules** run every `query_frequency` hours and search the last `query_period` hours of data. An alert is raised when the number of results compares to `threshold_value` as `threshold_operator` says: `GreaterThan` and `0` raise an alert on the first result. A rule overrides both values with `custom.query_frequency` and `custom.query_period`.
+
+Logs reach the workspace some minutes after they happen, more for some sources. With a `query_period` equal to `query_frequency`, an event that arrives after the run covering it never matches: a run only looks at its own window. A `query_period` longer than `query_frequency`, such as 2 and 1, catches it on the next run. The overlap has a cost: an event already ingested in time matches both runs, and raises two alerts. Incident grouping puts the second alert in the incident of the first, as long as the incident is still open and the entities match.
+
+**Near real-time (NRT) rules** run about every minute on the data ingested since their last run, so they neither miss late events nor raise duplicates. A rule is deployed as NRT with `query_period: 0`, the value which also makes it near real-time on [Microsoft XDR](microsoft_xdr.md#schedule):
+
+```yaml
+...
+custom:
+  query_period: 0
+```
+
+An NRT rule has no frequency, lookback or threshold: `query_frequency`, `query_period`, `threshold_operator` and `threshold_value` do not apply, and every result raises an alert. Suppression, incident creation, grouping and entity mappings apply as for a scheduled rule.
+
+???+ warning
+
+    Microsoft Sentinel allows 50 NRT rules per workspace. Keep them for the rules where minutes matter, such as a sign-in with a break-glass account.
+
+???+ warning
+
+    Microsoft Sentinel may refuse to change the kind of a rule already deployed. To turn a deployed scheduled rule into an NRT rule, or back, remove it from Microsoft Sentinel before exporting it again. The integrity check (`droid rules integrity`) does not compare the kind of a deployed rule.
+
+### Suppression
+
+Suppression does not deduplicate alerts: once the rule raises an alert, Microsoft Sentinel stops running it for `suppress_period` hours. Any activity in that window is never searched, not even a different entity doing the same thing. Prefer incident grouping to reduce noise, and keep `suppress_status` for rules that need it.
 
 ### MSSP mode
 
@@ -192,9 +227,11 @@ mssp_search_exclude_list = ["Foo", "Sentinel3"]
 | disabled       | true/false | Set to true if you want to disable the rule                                                   |
 | removed        | true/false | Set to true if you want to delete the rule                                                    |
 | query_frequency| integer    | Run query every X hour |
-| query_period | integer       | Lookup data from the last X hour  |
+| query_period | integer       | Lookup data from the last X hour, or `0` for a near real-time rule, see [schedule](#schedule) |
+| grouping_period | integer    | Group the alerts created within X hours, overriding `grouping_period` |
+| grouping_matching_entities | list | Group the alerts by these entity types only, for instance `["Account"]`. Sets the grouping method to `Selected` |
 | entity_mappings | dict       | Configure the entity mappings  |
-| sentinel_entity_mappings | dict       | Configure the sentinel entity mappings  |
+| sentinel_entities | list     | Configure the sentinel entity mappings  |
 
 Use the following example to configure the entity mappings and sentinel entity mappings in a Sigma rule:
 
