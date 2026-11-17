@@ -1,0 +1,2667 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="droid enables Detection as Code using Sigma: validate, convert, search and deploy your Sigma rules to your SIEM and EDR.">
+      
+      
+      
+        <link rel="canonical" href="https://certeu.github.io/droid-docs/platforms/elastic_security/">
+      
+      
+        <link rel="prev" href="../splunk/">
+      
+      
+        <link rel="next" href="../microsoft_sentinel/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../_static/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>Elastic Security - droid</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#index-detection" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="droid" class="md-header__button md-logo" aria-label="droid" data-md-component="logo">
+      
+  <img src="../../_static/favicon.ico" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            droid
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Elastic Security
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/certeu/droid" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    certeu/droid
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Platforms
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../usage/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Usage
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="droid" class="md-nav__button md-logo" aria-label="droid" data-md-component="logo">
+      
+  <img src="../../_static/favicon.ico" alt="logo">
+
+    </a>
+    droid
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/certeu/droid" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    certeu/droid
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../log_source_variants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Log source variants
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../custom_fields/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rule custom fields
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../raw_rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Raw rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platforms
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Platforms
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../splunk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Splunk
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Elastic Security
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Elastic Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#index-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index detection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Index detection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#data-streams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data streams
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permissions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kibana-spaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kibana spaces
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-platforms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported Platforms
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#query-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query format
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mitre-attck" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MITRE ATT&amp;CK
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#severity-and-risk-score" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Severity and risk score
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#correlation-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Correlation rules
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Correlation rules">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pipelines-for-correlations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipelines for correlations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#look-back" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Look-back
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#suppression-of-repeated-alerts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Suppression of repeated alerts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#time-buckets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time buckets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alert-suppression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alert suppression
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alerts-per-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alerts per run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schedule
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#export-and-integrity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Export and integrity
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#main-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Main config
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rule-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rule actions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rule actions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opt-in-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opt-in actions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#overrides-per-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overrides per rule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#server-log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server log
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#email" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Email
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#webhook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Webhook
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#action-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Action variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sigma-custom-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sigma Custom Fields
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../microsoft_sentinel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Microsoft Sentinel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../microsoft_xdr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Microsoft XDR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#index-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index detection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Index detection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#data-streams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data streams
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permissions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kibana-spaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kibana spaces
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-platforms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported Platforms
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#query-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query format
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mitre-attck" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MITRE ATT&amp;CK
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#severity-and-risk-score" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Severity and risk score
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#correlation-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Correlation rules
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Correlation rules">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pipelines-for-correlations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipelines for correlations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#look-back" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Look-back
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#suppression-of-repeated-alerts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Suppression of repeated alerts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#time-buckets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time buckets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alert-suppression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alert suppression
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alerts-per-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alerts per run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schedule
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#export-and-integrity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Export and integrity
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#main-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Main config
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rule-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rule actions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rule actions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opt-in-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opt-in actions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#overrides-per-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overrides per rule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#server-log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server log
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#email" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Email
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#webhook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Webhook
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#action-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Action variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sigma-custom-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sigma Custom Fields
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>Elastic Security</h1>
+
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Search feature</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Export feature<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Remove detection rules</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Disable detection rules</li>
+</ul>
+</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Detection rule actions<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Index</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Server log</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Email</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Webhook</li>
+</ul>
+</li>
+</ul>
+<h3 id="index-detection">Index detection</h3>
+<details class="warning" open="open">
+<summary>Warning</summary>
+<p>It is necessary to specify the indexes within the Sigma pipeline or it will be defaulted to <code>logs-*</code>.</p>
+</details>
+<h4 id="data-streams">Data streams</h4>
+<p>Most logs live in data streams, named <code>&lt;type&gt;-&lt;dataset&gt;-&lt;namespace&gt;</code>. Point the pipeline at the data stream, never at its backing indices: a document showing <code>"_index": ".ds-logs-vault-planet.express-2026.10.29-000034"</code> belongs to the data stream <code>logs-vault-planet.express</code>. Elasticsearch prefixes the backing indices with <code>.ds-</code>, suffixes them with a date and a generation, and rolls them over.</p>
+<table>
+<thead>
+<tr>
+<th><code>val</code></th>
+<th>Matches</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>logs-vault-planet.express</code></td>
+<td>that data stream only</td>
+</tr>
+<tr>
+<td><code>logs-*-planet.express</code></td>
+<td>every dataset of the <code>planet.express</code> namespace</td>
+</tr>
+<tr>
+<td><code>logs-vault-*</code></td>
+<td>the <code>vault</code> dataset in every namespace</td>
+</tr>
+<tr>
+<td><code>*-vault-planet.express-*</code></td>
+<td>nothing: the name ends with the namespace, there is no <code>-</code> after</td>
+</tr>
+</tbody>
+</table>
+<p>Wildcards skip the hidden <code>.ds-</code> backing indices unless the pattern itself starts with a <code>.</code>.</p>
+<p>When several sources share one dataset, e.g. a generic <code>fallback</code> one, the index cannot tell them apart: add a condition on a field that does, with an <code>add_condition</code> transformation in the same pipeline.</p>
+<p>Before deploying, check what a pattern resolves to:</p>
+<div class="highlight"><pre><span></span><code>GET _resolve/index/logs-*-planet.express
+</code></pre></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Single index</label><label for="__tabbed_1_2">Multiple index</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Elastic Windows Process Creation</span>
+<span class="nt">priority</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+
+<span class="nt">transformations</span><span class="p">:</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">index_set_state</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set_state</span>
+<span class="w">  </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">"index"</span>
+<span class="w">  </span><span class="nt">val</span><span class="p">:</span><span class="w"> </span><span class="s">"windows-sysmon.*"</span>
+<span class="w">  </span><span class="nt">rule_conditions</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logsource</span>
+<span class="w">      </span><span class="nt">product</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">windows</span>
+<span class="w">      </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">process_creation</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Elastic Windows Process Creation</span>
+<span class="nt">priority</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+
+<span class="nt">transformations</span><span class="p">:</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">index_set_state</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set_state</span>
+<span class="w">  </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">"index"</span>
+<span class="w">  </span><span class="nt">val</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"windows-sysmon.*"</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"windows-sysmon2.*"</span>
+<span class="w">  </span><span class="nt">rule_conditions</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logsource</span>
+<span class="w">      </span><span class="nt">product</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">windows</span>
+<span class="w">      </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">process_creation</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="authentication">Authentication</h3>
+<p>The same credentials are used for Kibana (export and integrity) and for Elasticsearch (search). Set <code>auth_method</code> to one of:</p>
+<ul>
+<li><code>basic</code>: Authenticate using username and password, loaded from the environment variables:<ul>
+<li><code>DROID_ELASTIC_USERNAME</code> : Elastic username</li>
+<li><code>DROID_ELASTIC_PASSWORD</code> : Elastic password</li>
+</ul>
+</li>
+<li><code>api_key</code>: Authenticate using an Elasticsearch API key, loaded from the environment variable:<ul>
+<li><code>DROID_ELASTIC_API_KEY</code> : the <strong>encoded</strong> API key, as returned in the <code>encoded</code> field when the key is created</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms.elastic]</span>
+<span class="n">auth_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"api_key"</span>
+</code></pre></div>
+<h3 id="permissions">Permissions</h3>
+<p>Give droid a user, or an API key, of its own with the least privileges. Kibana runs a detection rule with the API key of whoever saved it last: the rules droid exports read the source indices with droid's privileges, not with the ones of an analyst.</p>
+<table>
+<thead>
+<tr>
+<th>Privilege</th>
+<th>Kind</th>
+<th>Needed by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>read</code> on the indices the rules read</td>
+<td>Elasticsearch</td>
+<td>search, and every run of the exported rules</td>
+</tr>
+<tr>
+<td>Security &gt; <em>Rules and Exceptions</em>: <strong>All</strong></td>
+<td>Kibana</td>
+<td>export (create, update, remove) and integrity</td>
+</tr>
+<tr>
+<td>Management &gt; <em>Actions and Connectors</em>: <strong>Read</strong></td>
+<td>Kibana</td>
+<td>export, only when <a href="#rule-actions">rule actions</a> are configured</td>
+</tr>
+</tbody>
+</table>
+<p>No cluster privilege is needed, nor any privilege on the alerts index: Kibana writes the alerts itself. As a role, in the space the rules go to:</p>
+<div class="highlight"><pre><span></span><code>PUT _security/role/droid
+{
+  "cluster": [],
+  "indices": [
+    {"names": ["logs-*"], "privileges": ["read"]}
+  ],
+  "applications": [
+    {
+      "application": "kibana-.kibana",
+      "privileges": ["feature_securitySolutionRulesV4.all", "feature_actions.read"],
+      "resources": ["space:default"]
+    }
+  ]
+}
+</code></pre></div>
+<details class="note" open="open">
+<summary>Note</summary>
+<ul>
+<li>List in <code>indices</code> every index pattern of your pipelines. A rule reading an index droid cannot read runs, but finds nothing.</li>
+<li>The Kibana feature names carry a version, <code>securitySolutionRulesV4</code> on Kibana 9.5. <code>GET kbn:/api/features</code> lists the ones of your Kibana, or pick <em>Rules and Exceptions</em> in <em>Stack Management &gt; Roles</em>.</li>
+<li>For an API key, create it as an administrator with the role above in its <code>role_descriptors</code>. A user creating its own API keys needs the <code>manage_own_api_key</code> cluster privilege on top.</li>
+</ul>
+</details>
+<h3 id="kibana-spaces">Kibana spaces</h3>
+<p>Droid exports to the default space, or to the <a href="https://www.elastic.co/docs/deploy-manage/manage-spaces">space</a> of your choice, e.g. one per team:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms.elastic]</span>
+<span class="n">kibana_url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://kibana.planet-express.local"</span>
+<span class="n">space</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"planet-express"</span><span class="w"> </span><span class="c1"># (1)!</span>
+</code></pre></div>
+<ol>
+<li>The ID of the space, as in its URLs <code>/s/planet-express/app/...</code>, not its name.</li>
+</ol>
+<p>Export, integrity and removal then only see the rules of that space: a rule of the same ID in another space is another rule. Searches run on Elasticsearch, which has no spaces.</p>
+<details class="warning" open="open">
+<summary>Warning</summary>
+<ul>
+<li>The connectors of the <a href="#rule-actions">rule actions</a> must exist in that space. Connector IDs are unique across all the spaces of Kibana while a connector is only usable in its own, so give each space's connectors IDs of their own, e.g. <code>planet-express-alerts-index</code>.</li>
+<li>Grant the <a href="#permissions">privileges</a> in that space: <code>"resources": ["space:planet-express"]</code>.</li>
+</ul>
+</details>
+<h3 id="supported-platforms">Supported Platforms</h3>
+<p>For Sigma rules both <code>esql</code> (ES|QL) and <code>eql</code> (EQL) are supported. ES|QL supports every correlation type EQL does and more, see <a href="#correlation-rules">Correlation rules</a>, and there are no known benefits to using EQL over ES|QL.</p>
+<p>For raw rules, both esql (ES|QL) and eql (EQL) are supported. Always use the <code>raw_language</code> custom field to specify the language used in the Sigma yaml file.</p>
+<p>For non correlation ES|QL rules, the metadata fields are automatically added to the query for better deduplication by the Elastic backend. Correlation ES|QL rules aggregate their events and have no <code>_id</code> to deduplicate on, droid suppresses their repeated alerts instead, see <a href="#correlation-rules">Correlation rules</a>.</p>
+<h3 id="query-format">Query format</h3>
+<p>Converted ES|QL queries read like the ones written in Kibana: the source command first, then one upper-case command per line.</p>
+<div class="highlight"><pre><span></span><code>FROM logs-endpoint.events.process-* METADATA _id, _index, _version
+| WHERE process.name=="powershell.exe" AND `1vendor.process.args` LIKE "*-enc*"
+</code></pre></div>
+<p>ES|QL and EQL only accept a field name without backticks when every segment of it starts with a letter (or with <code>_</code> or <code>@</code>) and is not a reserved word. Droid quotes every other field name for you, which covers:</p>
+<ul>
+<li>a segment starting with a digit, e.g. a vendor prefix like <code>1vendor.category</code></li>
+<li>a segment that is a reserved word, e.g. <code>delivery.by</code> or <code>rule.first</code> in ES|QL, <code>rule.sequence</code> in EQL</li>
+<li>any character outside letters, digits and <code>_</code>, e.g. <code>process.parent-name</code></li>
+</ul>
+<details class="note" open="open">
+<summary>Note</summary>
+<p>Upgrading to a version of droid that changes the query format updates every deployed rule on the next export, and reports an integrity mismatch for each rule until it is exported again.</p>
+</details>
+<h3 id="mitre-attck">MITRE ATT&amp;CK</h3>
+<p>The <code>attack.*</code> tags of a rule fill its MITRE ATT&amp;CK mapping in Kibana:</p>
+<ul>
+<li>a technique is listed under every tactic it belongs to, e.g. <code>attack.t1078</code> under Initial Access, Persistence, Privilege Escalation and Stealth</li>
+<li>a subtechnique is nested under its technique, e.g. <code>attack.t1078.004</code></li>
+<li>a tactic tag without technique, e.g. <code>attack.initial-access</code> or <code>attack.ta0001</code>, keeps its own entry</li>
+</ul>
+<p>The other tags are exported as Kibana tags.</p>
+<h3 id="severity-and-risk-score">Severity and risk score</h3>
+<table>
+<thead>
+<tr>
+<th>Sigma level</th>
+<th>Severity</th>
+<th>Risk score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>critical</td>
+<td>critical</td>
+<td>99</td>
+</tr>
+<tr>
+<td>high</td>
+<td>high</td>
+<td>73</td>
+</tr>
+<tr>
+<td>medium</td>
+<td>medium</td>
+<td>47</td>
+</tr>
+<tr>
+<td>low</td>
+<td>low</td>
+<td>21</td>
+</tr>
+<tr>
+<td>informational</td>
+<td>low</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>Elastic has no informational severity, the risk score keeps those rules apart from the low ones.</p>
+<h3 id="correlation-rules">Correlation rules</h3>
+<p><a href="https://sigmahq.io/docs/meta/correlations.html">Correlation rules</a> are supported with ES|QL, and partly with EQL. Write the correlation and the rules it references in one file:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Vault Sign-In Failure</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vault_signin_failure</span>
+<span class="c1"># ...</span>
+<span class="nt">logsource</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">product</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vault</span>
+<span class="w">    </span><span class="nt">service</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">signin_attempts</span>
+<span class="nt">detection</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">selection</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">credentials_failed</span>
+<span class="w">    </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">selection</span>
+<span class="nn">---</span>
+<span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Vault Brute Force</span>
+<span class="c1"># ...</span>
+<span class="nt">correlation</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">event_count</span>
+<span class="w">    </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vault_signin_failure</span>
+<span class="w">    </span><span class="nt">group-by</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">target_user.email</span>
+<span class="w">    </span><span class="nt">timespan</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10m</span>
+<span class="w">    </span><span class="nt">condition</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">gte</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</code></pre></div>
+<p>which converts to:</p>
+<div class="highlight"><pre><span></span><code>FROM logs-signin-attempts-planet-express-default METADATA _id, _index, _version
+| WHERE `1vault.signinattempts.category`=="credentials_failed"
+| EVAL timebucket=date_trunc(10minutes, @timestamp)
+| STATS event_count=count() BY timebucket, `1vault.signinattempts.target_user.email`
+| WHERE event_count &gt;= 5
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Correlation type</th>
+<th>ES|QL</th>
+<th>EQL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>event_count</code></td>
+<td>Yes</td>
+<td>With a <code>gte</code> condition only, as a <code>sequence ... with runs=N</code></td>
+</tr>
+<tr>
+<td><code>value_count</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>temporal</code></td>
+<td>Yes</td>
+<td>Yes, as a <code>sample</code></td>
+</tr>
+<tr>
+<td><code>temporal_ordered</code></td>
+<td>No</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<p>Droid warns and skips a correlation the language cannot express. On EQL, the backend would render <code>value_count</code> as a sequence of events sharing the counted value, the opposite of distinct values, any <code>event_count</code> condition as "at least", and <code>temporal_ordered</code> as a query Elasticsearch cannot parse.</p>
+<p>An EQL <code>sequence</code> counts the events within its <code>maxspan</code>, a sliding window, where ES|QL counts them per <a href="#time-buckets">time bucket</a>. Kibana deduplicates the alerts of EQL correlations itself, the <a href="#suppression-of-repeated-alerts">suppression of repeated alerts</a> is only needed by ES|QL. An EQL <code>sample</code> has no time window: the <a href="#look-back">look-back</a> of the rule bounds it.</p>
+<p>Only the correlation is deployed: the rules it references are part of its query, and a rule of the file it does not reference is not deployed either.</p>
+<h4 id="pipelines-for-correlations">Pipelines for correlations</h4>
+<p>A log source group can convert its correlation rules with other pipelines through <code>pipelines_correlation</code>, see <a href="../../configuration/#correlation-rule-overrides">Correlation rule overrides</a>. The whole file is then converted with these pipelines, including the rules the correlation references, so the list must still hold the field mappings and conditions of these rules. A typical use is pointing the aggregation at a narrower index:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms.elastic.pipelines.vault_signin_attempts]</span>
+<span class="n">pipelines</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"pipelines/elastic_vault.yml"</span><span class="p">]</span>
+<span class="n">pipelines_correlation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">"pipelines/elastic_vault.yml"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"pipelines/elastic_vault_correlation.yml"</span><span class="p">,</span><span class="w"> </span><span class="c1"># (1)!</span>
+<span class="p">]</span>
+<span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"vault"</span>
+<span class="n">service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"signin_attempts"</span>
+</code></pre></div>
+<ol>
+<li>A higher priority pipeline that sets the <code>index</code> state to the sign-in data stream alone.</li>
+</ol>
+<h4 id="look-back">Look-back</h4>
+<p>Kibana only hands a rule the events between <code>from</code> and the time it runs. A correlation looks back over its <code>timespan</code> on top of the schedule interval and the <code>additional_look_back</code>: a 1 hour correlation scheduled every 5 minutes runs with <code>from: now-3900s</code>.</p>
+<h4 id="suppression-of-repeated-alerts">Suppression of repeated alerts</h4>
+<p>Each run within the look-back sees the same group again, and Kibana would raise a new alert for it every time. Unless an <a href="#alert-suppression">alert suppression</a> is configured for the rule, droid suppresses the alerts of a correlation on <code>timebucket</code> and its <code>group-by</code> fields, for the duration of the look-back: the runs that follow add to the first alert instead of raising new ones.</p>
+<details class="warning" open="open">
+<summary>Warning</summary>
+<ul>
+<li>Alert suppression needs a Platinum license or higher. On a lower license, set <code>suppress_correlation_alerts = false</code>, and expect one alert per run for as long as a group stays within the look-back.</li>
+<li>Kibana suppresses on three fields at most: a correlation grouped by more than two fields is deployed without suppression, with a warning, until you pick its fields with an <a href="#alert-suppression">alert suppression</a>.</li>
+</ul>
+</details>
+<h4 id="time-buckets">Time buckets</h4>
+<p>The correlation counts events per fixed <code>timespan</code> bucket (<code>date_trunc</code>), not over a sliding window. With a 10 minutes timespan, five failures between 09:08 and 09:12 fall in two buckets, 09:00 and 09:10, and do not match a <code>gte: 5</code> condition.</p>
+<h3 id="alert-suppression">Alert suppression</h3>
+<p>A noisy rule raises one alert per matching event. <a href="https://www.elastic.co/docs/solutions/security/detect-and-alert/suppress-detection-alerts">Alert suppression</a> raises one alert per group of field values instead, e.g. one per account and per hour: the events that follow are counted on that alert, in <code>kibana.alert.suppression.docs_count</code>, and run no <a href="#rule-actions">action</a>. It is the counterpart of <code>alert.suppress.fields</code> and <code>alert.suppress.period</code> on <a href="../splunk/">Splunk</a>.</p>
+<details class="warning" open="open">
+<summary>Warning</summary>
+<p>Alert suppression needs a Platinum license or higher.</p>
+</details>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Mandatory</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>group_by</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>1 to 3 fields, as named in Elasticsearch once the pipelines mapped them</td>
+</tr>
+<tr>
+<td>duration</td>
+<td>No</td>
+<td>None</td>
+<td>Suppress for this period, e.g. <code>90s</code>, <code>30m</code> or <code>4h</code>. Without it, alerts are only grouped within each rule run</td>
+</tr>
+<tr>
+<td>missing_fields</td>
+<td>No</td>
+<td><code>suppress</code></td>
+<td><code>suppress</code> groups the events missing a <code>group_by</code> field together, <code>do_not_suppress</code> alerts on each of them</td>
+</tr>
+</tbody>
+</table>
+<p>A rule takes the first suppression found among:</p>
+<ol>
+<li>its custom field <code>elastic_suppression</code>, <code>false</code> turning suppression off for the rule</li>
+<li>the <code>suppression</code> of its <a href="../../configuration/">pipeline group</a>, each <a href="../../log_source_variants/">variant</a> having its own</li>
+<li>the <code>[platforms.elastic.suppression]</code> of the platform</li>
+</ol>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Rule</label><label for="__tabbed_2_2">Pipeline group</label><label for="__tabbed_2_3">Platform</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="nt">custom</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">elastic_suppression</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">group_by</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1vault.signinattempts.target_user.email</span>
+<span class="w">        </span><span class="nt">duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1h</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="k">[platforms.elastic.pipelines.vault_signin_attempts]</span>
+<span class="n">pipelines</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"pipelines/elastic_vault.yml"</span><span class="p">]</span>
+<span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"vault"</span>
+<span class="n">service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"signin_attempts"</span>
+<span class="n">suppression</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">group_by</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"1vault.signinattempts.target_user.email"</span><span class="p">],</span><span class="w"> </span><span class="n">duration</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"1h"</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="k">[platforms.elastic.suppression]</span>
+<span class="n">group_by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"host.name"</span><span class="p">]</span>
+<span class="n">duration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"4h"</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>A suppression configured for a <a href="#correlation-rules">correlation</a> replaces the one droid sets on its own. Its fields can only be among the ones the correlation returns, <code>timebucket</code> and its <code>group-by</code> fields, droid warns about any other. Without <code>duration</code>, the correlation is suppressed over its look-back.</p>
+<h3 id="alerts-per-run">Alerts per run</h3>
+<p>A rule run raises at most <code>max_signals</code> alerts, 100 by default. Kibana drops the others and flags the run with a warning. Raise it for the platform with <code>max_signals</code>, or for one rule with the custom field <code>elastic_max_signals</code>. Kibana caps it with <a href="https://www.elastic.co/docs/reference/kibana/configuration-reference/alerting-settings"><code>xpack.alerting.rules.run.alerts.max</code></a>, 1000 by default.</p>
+<h3 id="schedule">Schedule</h3>
+<p>A rule runs every <code>interval</code> and looks back over that interval, plus the <code>additional_look_back</code>, plus the <code>timespan</code> of a <a href="#look-back">correlation</a>. A rare, expensive rule can run hourly while a critical one runs every minute, each taking the first value found among:</p>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Interval</th>
+<th>Additional look-back</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rule</td>
+<td>custom field <code>elastic_interval</code></td>
+<td>custom field <code>elastic_additional_look_back</code></td>
+</tr>
+<tr>
+<td>Pipeline group</td>
+<td><code>interval</code></td>
+<td><code>additional_look_back</code></td>
+</tr>
+<tr>
+<td>Platform</td>
+<td><code>schedule_interval</code> and <code>schedule_interval_unit</code></td>
+<td><code>additional_look_back</code></td>
+</tr>
+</tbody>
+</table>
+<p>Durations are written like <code>90s</code>, <code>5m</code>, <code>1h</code> or <code>1d</code>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Rule</label><label for="__tabbed_3_2">Pipeline group</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="nt">custom</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">elastic_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1h</span>
+<span class="w">    </span><span class="nt">elastic_additional_look_back</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5m</span><span class="w"> </span><span class="c1"># (1)!</span>
+</code></pre></div>
+<ol>
+<li>Every run covers the last 65 minutes.</li>
+</ol>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="k">[platforms.elastic.pipelines.windows_driver_load]</span>
+<span class="n">pipelines</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"pipelines/elastic_windows.yml"</span><span class="p">]</span>
+<span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"windows"</span>
+<span class="n">category</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"driver_load"</span>
+<span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"15m"</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="export-and-integrity">Export and integrity</h3>
+<p>Export creates the rules missing from Kibana and updates the ones that differ from what droid would deploy, leaving the others untouched: running it again over unchanged rules changes nothing. A rule whose language changed, from ES|QL to EQL or back, is deleted and created again. The custom fields <code>disabled</code>, <code>building_block</code> and <code>removed</code> disable the rule, make it a building block, or delete it; deleting a rule already gone is not an error.</p>
+<p>Integrity checks that each rule on Kibana is the one export would deploy, field by field, and names every field that differs:</p>
+<ul>
+<li>the query, and the index of EQL rules</li>
+<li>the name, description, severity, risk score, MITRE ATT&amp;CK mapping and tags</li>
+<li>the schedule and look-back, <code>interval</code> and <code>from</code></li>
+<li>the actions, alert suppression and <code>max_signals</code></li>
+<li>whether the rule is enabled, and whether it is a building block</li>
+</ul>
+<p>A rule changed on Kibana since its export, or changed in the repository and not exported yet, fails the check. So does a rule marked <code>removed</code> still on Kibana, or a rule Kibana cannot show droid.</p>
+<h3 id="main-config">Main config</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Mandatory</th>
+<th>Default Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kibana_url</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>The Base URL to your Kibana, since the Security API used goes via Kibana not Elasticsearch</td>
+</tr>
+<tr>
+<td>space</td>
+<td>No</td>
+<td>None</td>
+<td>ID of the Kibana space of the rules, the default space otherwise, see <a href="#kibana-spaces">Kibana spaces</a></td>
+</tr>
+<tr>
+<td>auth_method</td>
+<td>No</td>
+<td>"basic"</td>
+<td><code>basic</code> or <code>api_key</code>, see <a href="#authentication">Authentication</a></td>
+</tr>
+<tr>
+<td>elastic_hosts</td>
+<td>No</td>
+<td>[]</td>
+<td>Elasticsearch hosts, only used when Searching</td>
+</tr>
+<tr>
+<td>kibana_ca</td>
+<td>No</td>
+<td>False</td>
+<td>Certificate Chain used on the Kibana host</td>
+</tr>
+<tr>
+<td>elastic_ca</td>
+<td>No</td>
+<td>None</td>
+<td>Certificate Chain used on the Elastic host, can also be the same as Kibana, only used when Searching</td>
+</tr>
+<tr>
+<td>elastic_tls_verify</td>
+<td>No</td>
+<td>False</td>
+<td>Used to turn on and off Certificate Validation for Elastic Connections, only used when Searching</td>
+</tr>
+<tr>
+<td>schedule_interval</td>
+<td>No</td>
+<td>"1"</td>
+<td>Interval at which the rules run, unless a rule or its pipeline group sets its own, see <a href="#schedule">Schedule</a></td>
+</tr>
+<tr>
+<td>schedule_interval_unit</td>
+<td>No</td>
+<td>"h"</td>
+<td>Interval unit second (s), minute (m), hour (h) or day (d)</td>
+</tr>
+<tr>
+<td>additional_look_back</td>
+<td>No</td>
+<td>None</td>
+<td>Extra time each run looks back, e.g. "1m", so events ingested late are not missed between two runs</td>
+</tr>
+<tr>
+<td>suppress_correlation_alerts</td>
+<td>No</td>
+<td>true</td>
+<td>Suppress the repeated alerts of correlation rules, needs a Platinum license, see <a href="#suppression-of-repeated-alerts">Suppression of repeated alerts</a></td>
+</tr>
+<tr>
+<td>suppression</td>
+<td>No</td>
+<td>None</td>
+<td>Alert suppression of every rule, see <a href="#alert-suppression">Alert suppression</a></td>
+</tr>
+<tr>
+<td>max_signals</td>
+<td>No</td>
+<td>100</td>
+<td>Maximum number of alerts a rule run raises, see <a href="#alerts-per-run">Alerts per run</a></td>
+</tr>
+<tr>
+<td>license</td>
+<td>No</td>
+<td>"DRL"</td>
+<td>The license of your rule</td>
+</tr>
+<tr>
+<td>legacy_esql</td>
+<td>No</td>
+<td>false</td>
+<td>This flag is only if you are on an Elastic Version that needs the square brackets around the metadata info.</td>
+</tr>
+<tr>
+<td>building_block_prefix</td>
+<td>No</td>
+<td>"BB"</td>
+<td>Optional prefix for Building Block Rules to distinguish from Alert rules</td>
+</tr>
+<tr>
+<td>alert_prefix</td>
+<td>No</td>
+<td>None</td>
+<td>Optional prefix to your imported rules to distinguish them</td>
+</tr>
+<tr>
+<td>esql_search_range_gte</td>
+<td>No</td>
+<td>"now-1h"</td>
+<td>How far back an ES|QL search looks, unless the rule sets its own search look-back</td>
+</tr>
+<tr>
+<td>eql_search_range_gte</td>
+<td>No</td>
+<td>"now-24h"</td>
+<td>How far back an EQL search looks, unless the rule sets its own search look-back</td>
+</tr>
+<tr>
+<td>esql_search_range_lte</td>
+<td>No</td>
+<td>now</td>
+<td>Where an ES|QL search stops, e.g. "now-5m" to leave out the events still being ingested</td>
+</tr>
+<tr>
+<td>eql_search_range_lte</td>
+<td>No</td>
+<td>now</td>
+<td>Where an EQL search stops</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms]</span>
+
+<span class="k">[platforms.elastic]</span>
+<span class="n">auth_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"basic"</span>
+<span class="n">kibana_url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://kibana.test.org"</span>
+<span class="n">kibana_ca</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"kibana-ca.pem"</span><span class="w"> </span><span class="c1"># Or False to ignore certificates</span>
+<span class="n">elastic_ca</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"elastic-ca.pem"</span>
+<span class="n">elastic_tls_verify</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="n">elastic_hosts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">"https://elasticsearch01.test.org:9200"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"https://elasticsearch02.test.org:9200"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"https://elasticsearch03.test.org:9200"</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">schedule_interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span>
+<span class="n">schedule_interval_unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"m"</span>
+<span class="n">additional_look_back</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"1m"</span><span class="w"> </span><span class="c1"># Each run covers the last 6 minutes</span>
+<span class="n">license</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"DRL"</span>
+<span class="n">alert_prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"SIGMA"</span>
+<span class="n">legacy_esql</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+
+<span class="c1"># Pipeline example</span>
+<span class="k">[platforms.elastic.pipelines.windows_process_creation]</span>
+<span class="n">pipelines</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"pipelines/ecs_pipeline.yml"</span><span class="p">]</span>
+<span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"windows"</span>
+<span class="n">category</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"process_creation"</span>
+<span class="p">...</span>
+</code></pre></div>
+<h3 id="rule-actions">Rule actions</h3>
+<p>Rule actions notify, or keep track, when a rule raises alerts. Each action runs a Kibana <a href="https://www.elastic.co/docs/reference/kibana/connectors-kibana">connector</a>: droid attaches the actions to the rules it exports, the connectors themselves are created in Kibana beforehand, since they hold the secrets (SMTP password, webhook credentials).</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Connector</th>
+<th>Minimum license</th>
+<th>Default frequency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>index</code></td>
+<td><code>.index</code></td>
+<td>Basic</td>
+<td>For each alert</td>
+</tr>
+<tr>
+<td><code>server_log</code></td>
+<td><code>.server-log</code></td>
+<td>Basic</td>
+<td>Summary per run</td>
+</tr>
+<tr>
+<td><code>email</code></td>
+<td><code>.email</code></td>
+<td>Gold</td>
+<td>Summary per run</td>
+</tr>
+<tr>
+<td><code>webhook</code></td>
+<td><code>.webhook</code></td>
+<td>Gold</td>
+<td>Summary per run</td>
+</tr>
+</tbody>
+</table>
+<p>Declare each action under <code>[platforms.elastic.actions.&lt;name&gt;]</code>. A <em>global</em> action, the default, runs on every rule that does not select its own with the <a href="#sigma-custom-fields">custom field</a> <code>elastic_actions</code>; set <code>global = false</code> to run it only on the rules that name it, see <a href="#opt-in-actions">Opt-in actions</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms.elastic.actions.alerts_index]</span>
+<span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"index"</span>
+<span class="n">connector_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"droid-alerts-index"</span><span class="w"> </span><span class="c1"># (1)!</span>
+
+<span class="k">[platforms.elastic.actions.dispatch_email]</span>
+<span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"email"</span>
+<span class="n">connector_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"planet-express-smtp"</span>
+<span class="n">to</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"leela@planet-express.local"</span><span class="p">]</span>
+<span class="n">cc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"hermes@planet-express.local"</span><span class="p">]</span>
+<span class="n">throttle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"1h"</span><span class="w"> </span><span class="c1"># (2)!</span>
+
+<span class="k">[platforms.elastic.actions.dispatch_webhook]</span>
+<span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"webhook"</span>
+<span class="n">connector_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"planet-express-dispatch"</span>
+</code></pre></div>
+<ol>
+<li>The ID of the connector in Kibana, as shown in <em>Stack Management &gt; Connectors</em> or returned when the connector is created.</li>
+<li>At most one summary per hour, however often the rule runs.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nt">custom</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">elastic_actions</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dispatch_email</span><span class="w"> </span><span class="c1"># (1)!</span>
+</code></pre></div>
+<ol>
+<li>This rule only sends the email. <code>elastic_actions: []</code> runs no action at all.</li>
+</ol>
+<h4 id="opt-in-actions">Opt-in actions</h4>
+<p>An action with <code>global = false</code> runs only on the rules that name it, not on every rule that selects none. Use it when an action belongs to a few rules, e.g. one email per team, instead of firing for every rule the platform exports:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms.elastic.actions.dispatch_email]</span>
+<span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"email"</span>
+<span class="n">connector_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"planet-express-smtp"</span>
+<span class="n">to</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"leela@planet-express.local"</span><span class="p">]</span>
+<span class="n">global</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="c1"># (1)!</span>
+</code></pre></div>
+<ol>
+<li>Opt-in: it runs on the rules naming it, and a rule selecting nothing does not send it.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nt">custom</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">elastic_actions</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dispatch_email</span><span class="w"> </span><span class="c1"># (1)!</span>
+</code></pre></div>
+<ol>
+<li>A rule names the action to run it, and may still <a href="#overrides-per-rule">override</a> its parameters.</li>
+</ol>
+<p>A non-global action is built and checked as usual, its <code>connector_id</code> and parameters included: opting in only decides which rules run it, it is not a switch that skips an action left without its parameters.</p>
+<h4 id="overrides-per-rule">Overrides per rule</h4>
+<p>A rule can also change the parameters of its actions, e.g. to reach another team, by mapping each action to the parameters it overrides. The others come from the configuration:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">custom</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">elastic_actions</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">dispatch_email</span><span class="p">:</span><span class="w"> </span><span class="c1"># (1)!</span>
+<span class="w">            </span><span class="nt">to</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">zoidberg@planet-express.local</span>
+<span class="w">            </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="s">"Claws</span><span class="nv"> </span><span class="s">out:</span><span class="nv"> </span><span class="s">{{context.rule.name}}"</span>
+<span class="w">        </span><span class="nt">alerts_index</span><span class="p">:</span><span class="w"> </span><span class="c1"># (2)!</span>
+</code></pre></div>
+<ol>
+<li>Sent to Zoidberg, still with Hermes in <code>cc</code> as configured.</li>
+<li>Selected without any change.</li>
+</ol>
+<p>Rule files are usually open to more people than the configuration, and an action sends what the rule found. A rule therefore only overrides what its action lets it, listed in <code>overridable</code>: nothing by default. An email action can also bind the recipients rules give it to some domains:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms.elastic.actions.dispatch_email]</span>
+<span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"email"</span>
+<span class="n">connector_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"planet-express-smtp"</span>
+<span class="n">to</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"leela@planet-express.local"</span><span class="p">]</span>
+<span class="n">cc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"hermes@planet-express.local"</span><span class="p">]</span>
+<span class="n">overridable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"to"</span><span class="p">,</span><span class="w"> </span><span class="s2">"subject"</span><span class="p">]</span><span class="w"> </span><span class="c1"># (1)!</span>
+<span class="n">allowed_recipient_domains</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"planet-express.local"</span><span class="p">]</span><span class="w"> </span><span class="c1"># (2)!</span>
+</code></pre></div>
+<ol>
+<li>Any parameter of the action, <code>per_alert</code>, <code>throttle</code> and <code>connector_id</code> can be listed, never its <code>type</code>.</li>
+<li>Only binds the recipients a rule gives: <code>to = ["mom@momcorp.example"]</code> in a rule fails its export, while the configuration stays free to send outside. Each recipient a rule gives must be a single plain address: an entry hiding several, such as <code>"mom@momcorp.example, leela@planet-express.local"</code>, is refused.</li>
+</ol>
+<p>A rule overriding anything else fails its export, naming the parameter, and nothing of it is deployed.</p>
+<details class="info" open="open">
+<summary>Webhook per rule</summary>
+<p>Splunk sets the webhook URL of a rule. On Kibana, the URL belongs to the connector, along with its credentials: create a webhook connector per target, and let the rules pick theirs.</p>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms.elastic.actions.dispatch_webhook]</span>
+<span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"webhook"</span>
+<span class="n">connector_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"planet-express-dispatch"</span>
+<span class="n">overridable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"connector_id"</span><span class="p">]</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nt">custom</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">elastic_actions</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">dispatch_webhook</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">connector_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">momcorp-dispatch</span>
+</code></pre></div>
+<p>Kibana refuses a connector of another type, a rule cannot turn its webhook into an email.</p>
+</details>
+<h4 id="common-parameters">Common parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Mandatory</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>type</td>
+<td>Yes</td>
+<td>N/A</td>
+<td><code>index</code>, <code>server_log</code>, <code>email</code> or <code>webhook</code></td>
+</tr>
+<tr>
+<td>connector_id</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>ID of the Kibana connector the action runs</td>
+</tr>
+<tr>
+<td>per_alert</td>
+<td>No</td>
+<td>Depends on the type</td>
+<td><code>true</code> runs the action for each alert, <code>false</code> once per rule run with a summary of its alerts</td>
+</tr>
+<tr>
+<td>throttle</td>
+<td>No</td>
+<td>None</td>
+<td>Summary only: run at most once per period, e.g. <code>"1h"</code>, instead of on each rule run with alerts</td>
+</tr>
+<tr>
+<td>overridable</td>
+<td>No</td>
+<td>[]</td>
+<td>Parameters a rule may <a href="#overrides-per-rule">override</a></td>
+</tr>
+<tr>
+<td>allowed_recipient_domains</td>
+<td>No</td>
+<td>None</td>
+<td>Email only: domains the recipients a rule gives must belong to</td>
+</tr>
+<tr>
+<td>global</td>
+<td>No</td>
+<td>true</td>
+<td><code>false</code> makes the action <a href="#opt-in-actions">opt-in</a>: it runs only on the rules naming it</td>
+</tr>
+</tbody>
+</table>
+<p>Any other parameter is rejected, a typo fails before anything is exported.</p>
+<h4 id="index">Index</h4>
+<p>Keeps the alerts in an index of your own, e.g. to archive them longer than the alerts index or to feed another tool. By default each alert is indexed whole, under <code>alert</code>, with the rule, the reason and the source event:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"@timestamp"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-11-07T18:06:45.917Z"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"alert"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"kibana"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"alert"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"rule"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Vault Brute Force"</span><span class="p">,</span><span class="w"> </span><span class="nt">"..."</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">},</span><span class="w"> </span><span class="nt">"reason"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w"> </span><span class="nt">"severity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"medium"</span><span class="p">}},</span>
+<span class="w">    </span><span class="nt">"1vault"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"signinattempts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"target_user"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"kif@planet-express.local"</span><span class="p">}}}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>With <code>per_alert = false</code>, a single document per run holds <code>rule_id</code>, <code>rule_name</code>, <code>severity</code>, <code>risk_score</code>, <code>alerts_count</code> and <code>results_link</code>. Replace the document with <code>document</code>, a table whose values can use the <a href="#action-variables">action variables</a>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms.elastic.actions.alerts_index]</span>
+<span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"index"</span>
+<span class="n">connector_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"droid-alerts-index"</span>
+<span class="n">document</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">rule</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"{{context.rule.name}}"</span><span class="p">,</span><span class="w"> </span><span class="n">alert_id</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"{{alert.id}}"</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p>Create the index and its connector before exporting. Alerts hold hundreds of fields, the <code>flattened</code> type keeps them searchable without hitting the <a href="https://www.elastic.co/docs/manage-data/data-store/mapping/mapping-limit-settings">field limit</a> of the index:</p>
+<div class="highlight"><pre><span></span><code>PUT planet-express-alerts
+{
+  "mappings": {
+    "properties": {
+      "@timestamp": {"type": "date"},
+      "alert": {"type": "flattened"}
+    }
+  }
+}
+
+POST kbn:/api/actions/connector/droid-alerts-index
+{
+  "name": "Alerts archive",
+  "connector_type_id": ".index",
+  "config": {"index": "planet-express-alerts", "refresh": false, "executionTimeField": "@timestamp"}
+}
+</code></pre></div>
+<details class="warning" open="open">
+<summary>Warning</summary>
+<p>A <code>document</code> given as a string is not JSON escaped by Kibana: a rule name holding a quote turns it into invalid JSON, and the action fails in the Kibana logs only. Prefer a table, whose values are escaped.</p>
+</details>
+<h4 id="server-log">Server log</h4>
+<p>Writes a line in the Kibana log, handy to check that actions run. <code>level</code> is one of <code>trace</code>, <code>debug</code>, <code>info</code> (default), <code>warn</code>, <code>error</code> or <code>fatal</code>, and <code>message</code> replaces the default line.</p>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms.elastic.actions.kitchen_log]</span>
+<span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"server_log"</span>
+<span class="n">connector_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"droid-server-log"</span>
+<span class="n">level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"warn"</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>POST kbn:/api/actions/connector/droid-server-log
+{"name": "Server log", "connector_type_id": ".server-log"}
+</code></pre></div>
+<h4 id="email">Email</h4>
+<p>Sends the alerts by email. At least one of <code>to</code>, <code>cc</code> or <code>bcc</code> is required. <code>subject</code> and <code>message</code> (Markdown) replace the defaults, which give the rule, its severity and risk score, the number of alerts and a link to them.</p>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms.elastic.actions.dispatch_email]</span>
+<span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"email"</span>
+<span class="n">connector_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"planet-express-smtp"</span>
+<span class="n">to</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"leela@planet-express.local"</span><span class="p">]</span>
+<span class="n">subject</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"[{{context.rule.severity}}] {{context.rule.name}}"</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>POST kbn:/api/actions/connector/planet-express-smtp
+{
+  "name": "Planet Express SMTP",
+  "connector_type_id": ".email",
+  "config": {"service": "other", "host": "smtp.planet-express.local", "port": 587, "secure": false, "from": "droid@planet-express.local"},
+  "secrets": {"user": "droid", "password": "..."}
+}
+</code></pre></div>
+<p>See the <a href="https://www.elastic.co/docs/reference/kibana/connectors-kibana/email-action-type">email connector</a> for the other services (Exchange, Outlook, ...).</p>
+<details class="note" open="open">
+<summary>Note</summary>
+<p>Kibana escapes the Markdown characters of the variables in the message. The HTML part of the email reads as expected, while a text-only mail client shows the escapes, e.g. <code>PIZZA \- Vault Brute Force</code>.</p>
+</details>
+<h4 id="webhook">Webhook</h4>
+<p>Posts the alerts as JSON, e.g. to a SOAR. <code>body</code> replaces the default:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Summary (default)</label><label for="__tabbed_4_2">per_alert = true</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"rule_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"…"</span><span class="p">,</span><span class="w"> </span><span class="nt">"rule_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"…"</span><span class="p">,</span><span class="w"> </span><span class="nt">"severity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"…"</span><span class="p">,</span><span class="w"> </span><span class="nt">"risk_score"</span><span class="p">:</span><span class="w"> </span><span class="mi">47</span><span class="p">,</span><span class="w"> </span><span class="nt">"results_link"</span><span class="p">:</span><span class="w"> </span><span class="s2">"…"</span><span class="p">,</span><span class="w"> </span><span class="nt">"alerts_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nt">"alerts"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="err">…</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="err">…</span><span class="p">}]}</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"rule_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"…"</span><span class="p">,</span><span class="w"> </span><span class="nt">"rule_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"…"</span><span class="p">,</span><span class="w"> </span><span class="nt">"severity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"…"</span><span class="p">,</span><span class="w"> </span><span class="nt">"risk_score"</span><span class="p">:</span><span class="w"> </span><span class="mi">47</span><span class="p">,</span><span class="w"> </span><span class="nt">"results_link"</span><span class="p">:</span><span class="w"> </span><span class="s2">"…"</span><span class="p">,</span><span class="w"> </span><span class="nt">"alert"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">…</span><span class="p">}}</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="highlight"><pre><span></span><code><span class="k">[platforms.elastic.actions.dispatch_webhook]</span>
+<span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"webhook"</span>
+<span class="n">connector_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"planet-express-dispatch"</span>
+<span class="n">per_alert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>POST kbn:/api/actions/connector/planet-express-dispatch
+{
+  "name": "Planet Express dispatch",
+  "connector_type_id": ".webhook",
+  "config": {"url": "https://soar.planet-express.local/hooks/droid", "method": "post", "hasAuth": true, "authType": "webhook-authentication-basic"},
+  "secrets": {"user": "droid", "password": "..."}
+}
+</code></pre></div>
+<p>In the body, <code>{{ }}</code> values are JSON escaped by Kibana and <code>{{{ }}}</code> are inserted raw, which is how the alerts go in as JSON objects.</p>
+<h4 id="action-variables">Action variables</h4>
+<p>Templates use the <a href="https://www.elastic.co/docs/solutions/security/detect-and-alert/common-rule-settings#rule-notifications">Security rule action variables</a>, among them:</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{{context.rule.name}}</code></td>
+<td>Name of the rule, with its <code>alert_prefix</code></td>
+</tr>
+<tr>
+<td><code>{{context.rule.rule_id}}</code></td>
+<td>ID of the Sigma rule</td>
+</tr>
+<tr>
+<td><code>{{context.rule.severity}}</code></td>
+<td>Severity of the rule</td>
+</tr>
+<tr>
+<td><code>{{context.rule.risk_score}}</code></td>
+<td>Risk score of the rule</td>
+</tr>
+<tr>
+<td><code>{{context.rule.description}}</code></td>
+<td>Description of the rule</td>
+</tr>
+<tr>
+<td><code>{{state.signals_count}}</code></td>
+<td>Number of alerts of the run</td>
+</tr>
+<tr>
+<td><code>{{context.alerts}}</code></td>
+<td>The alerts, as JSON: the one alert of a per alert action</td>
+</tr>
+<tr>
+<td><code>{{alert.id}}</code></td>
+<td>ID of the alert, per alert actions only</td>
+</tr>
+<tr>
+<td><code>{{context.results_link}}</code></td>
+<td>Link to the alerts in Kibana</td>
+</tr>
+<tr>
+<td><code>{{date}}</code></td>
+<td>Time of the run</td>
+</tr>
+</tbody>
+</table>
+<details class="note" open="open">
+<summary>Note</summary>
+<p><code>context.results_link</code> stays empty until <a href="https://www.elastic.co/docs/reference/kibana/configuration-reference/general-settings#server-publicbaseurl"><code>server.publicBaseUrl</code></a> is set in the Kibana configuration.</p>
+</details>
+<h3 id="sigma-custom-fields">Sigma Custom Fields</h3>
+<p>The Custom Fields available with the Elastic Integration are:</p>
+<table>
+<thead>
+<tr>
+<th>Custom Field</th>
+<th>Values</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>raw_language</td>
+<td>esql/eql</td>
+<td>The Language used on raw Rules</td>
+</tr>
+<tr>
+<td>disabled</td>
+<td>true/false</td>
+<td>Set to true if you want to disable the rule</td>
+</tr>
+<tr>
+<td>removed</td>
+<td>true/false</td>
+<td>Set to true if you want to delete the rule</td>
+</tr>
+<tr>
+<td>building_block</td>
+<td>true/false</td>
+<td>Set to true if your rule should be a building block</td>
+</tr>
+<tr>
+<td>index</td>
+<td>list of strings</td>
+<td>Set one or more indexes to be used. Use a list (-) if you want more than one index</td>
+</tr>
+<tr>
+<td>elastic_actions</td>
+<td>list or mapping</td>
+<td>Names of the <a href="#rule-actions">rule actions</a> the rule runs, instead of the <a href="#opt-in-actions">global</a> ones, or a mapping of them to the parameters the rule overrides. <code>[]</code> for none</td>
+</tr>
+<tr>
+<td>elastic_interval</td>
+<td>duration</td>
+<td>How often the rule runs, e.g. <code>1h</code>, see <a href="#schedule">Schedule</a></td>
+</tr>
+<tr>
+<td>elastic_additional_look_back</td>
+<td>duration</td>
+<td>Extra time each run of the rule looks back, see <a href="#schedule">Schedule</a></td>
+</tr>
+<tr>
+<td>elastic_suppression</td>
+<td>table/false</td>
+<td>The <a href="#alert-suppression">alert suppression</a> of the rule, <code>false</code> for none</td>
+</tr>
+<tr>
+<td>elastic_max_signals</td>
+<td>integer</td>
+<td>Maximum number of alerts a run of the rule raises, see <a href="#alerts-per-run">Alerts per run</a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.top", "navigation.sections", "navigation.top", "toc.follow", "content.code.copy", "content.code.annotate", "navigation.indexes"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>
