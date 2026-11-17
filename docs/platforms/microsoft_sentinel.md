@@ -53,7 +53,7 @@ If the environment variable `DROID_AZURE_TOKEN_HOOK` is set with a URL, the hook
 
 The hook function  supports dynamic URL configuration using placeholders:
 
-- `{TENANT_ID}`: Replaced with the provided or default tenant ID.
+- `{TENANT_ID}`: Replaced with the tenant the token is for: `tenant_id`, or in [MSSP mode](#authentication-in-mssp-mode) the tenant of the workspace or `mssp_auth_tenant_id`.
 - `{SCOPE}`: Replaced with the requested scope.
 
 Additional infos:
@@ -182,9 +182,9 @@ Suppression does not deduplicate alerts: once the rule raises an alert, Microsof
 
 The MSSP mode (`--mssp`) in Microsoft Sentinel allows to perform various operations involving multiple workspaces.
 
-When using `droid rules search`, this mode allows to query multiple Microsoft Sentinel workspaces for one or multiple rules. To achieve that, `droid` will first list all the Microsoft Sentinel workspaces using an Azure Resource Graph query and will query all the workspaces with parallel tasks.
+When using `droid rules search`, this mode allows to query multiple Microsoft Sentinel workspaces for one or multiple rules: every workspace included in the droid configuration file is searched. A workspace that cannot be searched, or that only returns a partial result, fails the search of the rule once the other workspaces have been searched, the hits found there included.
 
-This mode also allows to export (`droid rules export`) detection rules to specific Microsoft Sentinel workspaces included in the droid configuration file.
+This mode also allows to export (`droid rules export`) detection rules to the same Microsoft Sentinel workspaces.
 
 To designate the Microsoft Sentinel workspaces, define them under the `export_list_mssp` section as a dictionary.
 
@@ -195,6 +195,7 @@ To designate the Microsoft Sentinel workspaces, define them under the `export_li
     [platforms.microsoft_sentinel.export_list_mssp.momcorp]
 
     workspace_name = "momcorp_sentinel"
+    workspace_id = "5c0e8f3a-7d21-4b6e-9a4f-2e8b1d6c3f70"
     tenant_id = "10e5ca4d-25ac-4d17-ae8d-0314ff0d8d44"
     resource_group_name = "momcorp_resource_group_prod"
     subscription_id = "98b80a67-4fec-424c-8f06-56be08deae77"
@@ -202,6 +203,7 @@ To designate the Microsoft Sentinel workspaces, define them under the `export_li
     [platforms.microsoft_sentinel.export_list_mssp.doop]
 
     workspace_name = "doop_sentinel"
+    workspace_id = "b7a3d9e1-4f6c-4e2a-8d15-9c0f2a7e6b34"
     tenant_id = "900b0bdf-4de1-48bb-bda4-862f638a92ac"
     resource_group_name = "doop_resource_group_prod"
     subscription_id = "94406b12-28d7-4505-9bfc-fade6ec9a560"
@@ -211,7 +213,25 @@ To designate the Microsoft Sentinel workspaces, define them under the `export_li
 
     The integrity feature (`droid rules integrity`) is also available.
 
+`workspace_id` is used by the searches, `workspace_name`, `resource_group_name` and `subscription_id` by the exports and the integrity checks.
+
 Each entry also accepts a `variants` key, which selects the telemetry sources that workspace carries when a log source is served by more than one. See [log source variants](../log_source_variants.md#per-customer-telemetry).
+
+#### Authentication in MSSP mode
+
+By default, droid authenticates against the `tenant_id` of each workspace to export, remove and check its rules, and against the `tenant_id` of the platform to search it.
+
+With [Azure Lighthouse](https://learn.microsoft.com/en-us/azure/lighthouse/overview), the workspaces of the customers are delegated to the managing tenant, which must issue every token. Name it with `mssp_auth_tenant_id`: every MSSP operation (search, export, removal and integrity) then authenticates against it, whatever the `tenant_id` of the workspace. Keep the `tenant_id` of each workspace, the tenant of the customer.
+
+```toml
+[platforms.microsoft_sentinel]
+...
+mssp_auth_tenant_id = "3f9c2b6e-1a8d-4c57-b0e4-7d2a9f61c8b5"
+```
+
+???+ note
+
+    `mssp_auth_tenant_id` can also be provided with the environment variable `DROID_AZURE_MSSP_AUTH_TENANT_ID`, which overrides the TOML configuration. It is only used in MSSP mode.
 
 When using the search mode along with the `--mssp` argument you can exclude some workspaces from the search.
 
